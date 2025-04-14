@@ -1,0 +1,75 @@
+/* Styles for IncomeApproach component */
+.income-approach {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.income-approach h2 {
+  margin-top: 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.income-approach h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+.income-approach-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.income-approach-table td {
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  vertical-align: top;
+}
+
+.income-approach-table td:first-child {
+  width: 60%; /* Adjust as needed */
+  font-weight: normal;
+}
+
+.income-approach-table td:last-child {
+  text-align: right;
+  font-weight: bold;
+}
+
+.income-approach-table .section-header {
+  font-weight: bold;
+  background-color: #f8f8f8;
+  text-align: left;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.income-approach-table .sub-item td:first-child {
+  padding-left: 25px; /* Indent expense items */
+}
+
+.income-approach-table .total-item td {
+  border-top: 2px solid #aaa;
+  font-weight: bold;
+}
+
+.income-approach-table .sub-total td {
+  border-top: 1px solid #ccc; /* Lighter border for subtotal */
+  font-weight: bold;
+}
+
+
+.income-approach-table .final-value td {
+  border-top: 2px solid #000;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.income-approach p {
+  margin: 5px 0;
+  line-height: 1.4;
+}

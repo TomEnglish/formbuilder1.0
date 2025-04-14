@@ -1,0 +1,29 @@
+.improvements-description-section {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.improvements-description-section h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.4em;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+/* Inherit grid styles if defined globally or in App.css,
+   otherwise, define basic grid layout here */
+.improvements-description-section .form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid */
+  gap: 15px;
+}
+
+/* Add some spacing below each field */
+.improvements-description-section .editable-field-container {
+  margin-bottom: 5px;
+}

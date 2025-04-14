@@ -1,0 +1,43 @@
+.reconciliation-section {
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.reconciliation-section h2 {
+  margin-bottom: 15px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.reconciliation-section p {
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.final-value-section,
+.effective-date-section {
+  margin-bottom: 15px;
+}
+
+.final-value-section label,
+.effective-date-section label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+/* Style the EditableField within this component if needed */
+.reconciliation-section .editable-field {
+  /* Example: Make the final value field stand out */
+  font-size: 1.1em;
+  font-weight: bold;
+  padding: 8px;
+}
+
+.final-value-section .editable-field {
+  border: 1px solid #888; /* Slightly stronger border for emphasis */
+}

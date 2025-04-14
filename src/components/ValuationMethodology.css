@@ -1,0 +1,38 @@
+/* Styles for ValuationMethodology component */
+.valuation-methodology {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fdfdfd; /* Slightly different background */
+}
+
+.valuation-methodology h2 {
+  margin-top: 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+  font-size: 1.3em; /* Slightly larger heading */
+}
+
+.valuation-methodology h3 {
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.valuation-methodology p {
+  margin: 5px 0 10px 0;
+  line-height: 1.4;
+}
+
+.valuation-methodology ul {
+  margin-top: 5px;
+  margin-bottom: 15px;
+  padding-left: 25px; /* Indent list */
+}
+
+.valuation-methodology li {
+  margin-bottom: 5px;
+  line-height: 1.4;
+}

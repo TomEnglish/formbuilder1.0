@@ -1,0 +1,60 @@
+.certification {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.certification h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.4em;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.certification p {
+    margin-bottom: 10px;
+}
+
+.certification ul {
+  padding-left: 20px;
+  margin-top: 0;
+  margin-bottom: 20px; /* Add space before signature area */
+}
+
+.certification li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.signature-area {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #ccc;
+}
+
+.signature-line {
+  border-bottom: 1px solid #000;
+  height: 40px; /* Adjust height as needed */
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.signature-line span {
+  position: absolute;
+  bottom: -20px; /* Position text below the line */
+  left: 0;
+  font-size: 0.8em;
+  color: #555;
+}
+
+.appraiser-name {
+  margin-top: 25px; /* Space between line and name */
+}
+
+/* Optional: Style for EditableField within Certification if needed */
+.certification .editable-field {
+  /* Add specific styles if default EditableField styles need overriding */
+}

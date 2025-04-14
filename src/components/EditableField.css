@@ -1,0 +1,24 @@
+/* Basic styling for the editable field */
+.editable-field .ProseMirror {
+  border: 1px solid #ccc;
+  padding: 8px;
+  min-height: 50px; /* Adjust as needed */
+  border-radius: 4px;
+}
+
+.editable-field .ProseMirror:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 1px #007bff;
+}
+
+
+/* Print-specific styles for editable fields */
+@media print {
+  .editable-field .ProseMirror {
+    border: none;
+    box-shadow: none;
+    padding: 0; /* Remove padding for a cleaner print look */
+    min-height: unset; /* Allow content to flow naturally */
+  }
+}

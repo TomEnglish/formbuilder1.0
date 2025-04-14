@@ -1,0 +1,256 @@
+/* General App Layout */
+.App {
+  font-family: sans-serif;
+  padding: 20px;
+  margin: 20px auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+h1, h2 {
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+/* Input Section */
+.input-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.input-section label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.input-section textarea {
+  width: 95%; /* Adjust as needed */
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.input-section button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.input-section button:hover {
+  background-color: #0056b3;
+}
+
+/* Row Selector Section */
+.row-selector {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+  display: flex; /* Align items horizontally */
+  align-items: center; /* Vertically center items */
+  gap: 10px; /* Add space between elements */
+}
+
+.row-selector label {
+  font-weight: bold;
+  margin-right: 5px; /* Space between label and input */
+}
+
+.row-selector input[type="number"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 80px; /* Adjust width as needed */
+}
+
+.row-selector button {
+  padding: 8px 12px;
+  background-color: #28a745; /* Green for load */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.row-selector button:hover {
+  background-color: #218838;
+}
+
+.row-selector button.print-button {
+  background-color: #007bff; /* Blue for print */
+  margin-left: auto; /* Push print button to the right */
+}
+
+.row-selector button.print-button:hover {
+  background-color: #0056b3;
+}
+
+.row-selector button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Error Message */
+.error-message {
+    color: #dc3545; /* Bootstrap danger color */
+    background-color: #f8d7da; /* Light red background */
+    border: 1px solid #f5c6cb; /* Red border */
+    padding: 10px 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+
+/* Report Section */
+.report-section {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.report-section h2 {
+  margin-top: 0;
+}
+
+/* Component Styles */
+.report-header, .property-summary {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.report-header h2, .property-summary h2 {
+  font-size: 1.2em;
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+p {
+  line-height: 1.6;
+  margin: 5px 0;
+}
+
+strong {
+  margin-right: 5px;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 30px 0;
+}
+
+pre {
+  background-color: #eee;
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto; /* Handle long lines if pre is used */
+}
+
+
+/* Print Styles */
+@media print {
+  @page {
+    margin: 1in; /* Standard page margins */
+  }
+
+  body {
+    font-size: 11pt; /* Adjust base font size for print */
+    color: #000;
+    background-color: #fff;
+  }
+
+  /* Hide elements not meant for printing */
+  .no-print { /* Only hide elements explicitly marked with no-print */
+    display: none !important;
+  }
+  /* Hide main title and the entire row selector UI */
+  .App > h1,
+  .row-selector {
+    display: none !important;
+  }
+  /* Note: .print-button is inside .row-selector, so it's hidden too */
+
+  /* Prevent page breaks within report sections */
+  .report-section > div > div { /* Target direct component wrappers */
+    page-break-inside: avoid;
+  }
+
+
+  /* Reset app container styles for print */
+  .App {
+    border: none;
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+    box-shadow: none;
+    background-color: #fff;
+  }
+
+  /* Reset report section styles for print */
+  .report-section {
+    border: none;
+    padding: 0;
+    margin: 0;
+    background-color: #fff;
+  }
+
+  /* Apply consistent base styling to report sections for print */
+  .report-header,
+  .property-summary,
+  .scope-of-work,
+  .site-description-section,
+  .improvements-description-section,
+  .highest-best-use,
+  .sales-comparison-approach, /* Assuming class name */
+  .cost-approach,
+  .income-approach,
+  .reconciliation, /* Assuming class name */
+  .assumptions-limiting-conditions,
+  .certification /* Assuming class name */ {
+    padding: 10px !important; /* Add some internal padding */
+    margin: 0 0 10px 0 !important; /* Remove top/side margin, add small bottom margin */
+    border: 1px solid #ccc !important; /* Consistent light border */
+    page-break-inside: avoid !important; /* Try to keep sections together */
+    background-color: #fff !important; /* Ensure white background */
+    box-shadow: none !important; /* Remove shadows */
+    border-radius: 0 !important; /* Remove rounded corners for print */
+  }
+
+  h1, h2 {
+    border-bottom: 1px solid #ccc;
+    color: #000;
+  }
+
+  /* Add specific styles for Tiptap editor content if needed */
+  /* .ProseMirror { ... } */
+
+  a {
+    text-decoration: none;
+    color: #000;
+  }
+
+  /* Optional: Show URL for links in print */
+  /* a[href]:after { content: " (" attr(href) ")"; } */
+}
+

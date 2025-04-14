@@ -1,0 +1,30 @@
+/* Styles for HighestAndBestUse component */
+.highest-best-use {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.highest-best-use h2 {
+  margin-top: 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.highest-best-use h3 {
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.highest-best-use p {
+  margin: 5px 0;
+  line-height: 1.4;
+}
+
+.highest-best-use strong {
+  display: inline-block;
+  min-width: 150px; /* Adjust as needed */
+}

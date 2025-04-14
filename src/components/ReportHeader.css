@@ -1,0 +1,135 @@
+/* Styles for ReportHeader component */
+.report-header {
+  display: flex; /* Use flexbox for layout */
+  align-items: flex-start; /* Align items to the top */
+  justify-content: space-between; /* Space out company/client info */
+  gap: 20px; /* Add gap between company and client info */
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.report-logo {
+  max-height: 60px; /* Adjust max height as needed */
+  width: auto; /* Maintain aspect ratio */
+  margin-right: 20px; /* Add space between logo and text */
+}
+
+.company-info {
+  display: flex;
+  align-items: center; /* Align logo and company text */
+}
+
+.company-details {
+  margin-left: 15px; /* Space between logo and company text */
+}
+
+.company-details p {
+  margin: 0; /* Remove default paragraph margin */
+  line-height: 1.3; /* Adjust line height */
+  font-size: 0.9em; /* Slightly smaller font */
+}
+
+.company-name {
+  font-weight: bold;
+  font-size: 1.1em; /* Larger font for company name */
+  margin-bottom: 2px;
+}
+
+.client-info { /* Target the div containing client info specifically */
+  flex-grow: 1; /* Allow client info to take remaining space */
+  text-align: right; /* Align client info to the right */
+}
+
+.client-info div { /* Target the inner div holding the editable client name */
+  margin-bottom: 5px;
+}
+
+.report-header p {
+  margin: 2px 0; /* Reduce margin for tighter spacing */
+}
+
+/* Print specific styles for the header logo */
+@media print {
+  .report-header {
+    /* Keep space-between for print layout */
+    /* justify-content: flex-start; */
+    align-items: flex-start; /* Align top for print */
+    border: none !important; /* Remove border for print if desired */
+    padding: 0 0 10px 0 !important; /* Adjust padding for print */
+    margin-bottom: 15px !important;
+  }
+  .report-logo {
+    max-height: 50px; /* Slightly smaller logo for print */
+  }
+}
+
+
+/* Section Visibility Controls */
+.section-visibility-controls {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.section-visibility-controls strong {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.checkbox-list {
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap to the next line */
+  gap: 10px 20px; /* Row gap and column gap */
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Space between checkbox and label */
+}
+
+.checkbox-item input[type="checkbox"] {
+  margin: 0;
+}
+
+.checkbox-item label {
+  cursor: pointer;
+  user-select: none; /* Prevent text selection on label click */
+  white-space: nowrap; /* Prevent labels from wrapping */
+}
+
+/* Hide controls when printing */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+
+/* File Input Styling */
+.file-input-section {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.file-input-label {
+  font-weight: bold;
+  margin-right: 10px;
+  display: inline-block; /* Align label and input */
+}
+
+.file-input {
+  /* Basic styling, can be enhanced */
+  padding: 5px;
+}
+
+/* Hide file input section when printing */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
