@@ -13,7 +13,7 @@ function Reconciliation() {
   const effectiveDate = reportData.effectiveDate ?? "[Effective Date]"; // Get from top level
 
   return (
-    <div className="reconciliation-section section">
+    <div id="reconciliation" className="reconciliation-section section">
       <h2>Reconciliation and Final Value Conclusion</h2>
 
       <h3>Reconciliation Narrative</h3>

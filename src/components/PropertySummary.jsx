@@ -10,7 +10,7 @@ function PropertySummary() { // Remove props
   // Removed handlePropertyTypeChange and handleYearBuiltChange
 
   return (
-    <div className="property-summary">
+    <div id="propertySummary" className="property-summary">
       <h2>Property Summary</h2>
       {/* Updated to use reportData from context */}
       <p><strong>Property Address:</strong> {reportData.propertyAddress || 'N/A'}</p>

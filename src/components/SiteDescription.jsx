@@ -11,7 +11,7 @@ function SiteDescription() {
   // Removed prop-based destructuring
 
   return (
-    <div className="site-description-section">
+    <div id="siteDescription" className="site-description-section">
       <h2>Site Description</h2>
 
       <h3>Site Details</h3>

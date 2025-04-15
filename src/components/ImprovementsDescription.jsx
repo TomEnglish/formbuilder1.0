@@ -11,7 +11,7 @@ function ImprovementsDescription() {
   // Removed old destructuring block that used the 'data' prop
 
   return (
-    <div className="improvements-description-section section">
+    <div id="improvementsDescription" className="improvements-description-section section">
       <h2>Improvements Description</h2>
 
       <h3>Improvement Details</h3>
