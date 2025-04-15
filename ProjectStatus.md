@@ -16,29 +16,29 @@
 - [x] Create `AssumptionsAndLimitingConditions` component (placeholder)
 - [x] Create `Certification` component (placeholder)
 - [x] Integrate core components into `App.jsx`
-- [ ] Create `ScopeOfWork` component (placeholder)
-- [ ] Create `HighestAndBestUse` component (placeholder)
-- [ ] Create `CostApproach` component (placeholder)
-- [ ] Create `IncomeApproach` component (placeholder)
-- [ ] Create `LetterOfTransmittal` component (placeholder)
-- [ ] Create `TableOfContents` component (placeholder)
-- [ ] Create `Addenda` container/components (placeholder)
-- [ ] Integrate remaining placeholder components into `App.jsx`
+- [x] Create `ScopeOfWork` component
+- [x] Create `HighestAndBestUse` component
+- [x] Create `CostApproach` component
+- [x] Create `IncomeApproach` component
+- [x] Create `LetterOfTransmittal` component (placeholder)
+- [x] Create `TableOfContents` component (placeholder)
+- [x] Create `Addenda` container/components (placeholder)
+- [x] Integrate remaining placeholder components into `App.jsx`
 
 ## Phase 2: Rich Text Editing
 - [x] Create `EditableField` component
 - [x] Install TipTap dependencies
 - [x] Integrate TipTap editor into `EditableField`
 - [x] Connect `EditableField` edits to update `appraisalData` state in `App.jsx`
-- [ ] Add TipTap toolbar/controls for formatting (Optional Enhancement)
-- [ ] Identify and integrate `EditableField` into more report sections as needed
+- [x] Add TipTap toolbar/controls for formatting (Optional Enhancement)
+- [x] Identify and integrate `EditableField` into more report sections as needed
 
 ## Phase 3: Boilerplate & Content Integration
 - [x] Analyze sample report for structure and boilerplate (`company-report-sample.txt`)
 - [x] Document identified boilerplate (`BoilerplateText.md`)
-- [ ] Integrate boilerplate text into `Certification` component
-- [ ] Integrate boilerplate text into `AssumptionsAndLimitingConditions` component
-- [ ] Integrate boilerplate text into other relevant components (e.g., Definitions in Scope of Work)
+- [x] Integrate boilerplate text into `Certification` component
+- [x] Integrate boilerplate text into `AssumptionsAndLimitingConditions` component
+- [x] Integrate boilerplate text into other relevant components (e.g., Definitions in Scope of Work)
 - [ ] Populate placeholder components with basic structure/content based on sample report
 
 ## Phase 4: Valuation Logic & Data Input

@@ -1,24 +1,26 @@
-import React from 'react';
+import React, { useContext } from 'react'; // Import useContext
+import { ReportContext } from '../context/ReportDataContext'; // Import ReportContext
+import EditableField from './EditableField'; // Import EditableField
 import './IncomeApproach.css';
 
-// Accept data as a prop
-function IncomeApproach({ data }) {
-  // Removed the hardcoded incomeData object
+// Removed data prop
+function IncomeApproach() {
+  // Get context data
+  const { reportData, updateReportData } = useContext(ReportContext);
 
-  // Use default values directly in JSX if data or specific income fields are missing
-  // Assuming income data might be nested under a key like 'incomeApproach' in the future
-  const incomeApproachData = data?.incomeApproach ?? {};
-  const potentialGrossIncome = incomeApproachData.potentialGrossIncome ?? "[PGI]";
-  const vacancyCollectionLoss = incomeApproachData.vacancyCollectionLoss ?? "[V&amp;C Loss]";
-  const effectiveGrossIncome = incomeApproachData.effectiveGrossIncome ?? "[EGI]";
-  const operatingExpenses = incomeApproachData.operatingExpenses ?? {};
-  const netOperatingIncome = incomeApproachData.netOperatingIncome ?? "[NOI]";
-  const capitalizationRate = incomeApproachData.capitalizationRate ?? "[Cap Rate]";
-  const indicatedValueByIncomeApproach = incomeApproachData.indicatedValueByIncomeApproach ?? "[Indicated Value]";
-  const summary = incomeApproachData.summary ?? "[Summary narrative...]";
+  // Placeholder values for display - these should eventually come from context/state
+  const potentialGrossIncome = reportData.incomeApproach?.potentialGrossIncome ?? "[PGI]";
+  const vacancyCollectionLoss = reportData.incomeApproach?.vacancyCollectionLoss ?? "[V&C Loss]";
+  const effectiveGrossIncome = reportData.incomeApproach?.effectiveGrossIncome ?? "[EGI]";
+  const operatingExpenses = reportData.incomeApproach?.operatingExpenses ?? {}; // Keep as object for sub-fields
+  const netOperatingIncome = reportData.incomeApproach?.netOperatingIncome ?? "[NOI]";
+  const capitalizationRate = reportData.incomeApproach?.capitalizationRate ?? "[Cap Rate]";
+  const indicatedValueByIncomeApproach = reportData.incomeApproach?.indicatedValueByIncomeApproach ?? "[Indicated Value]";
+  // Summary narrative comes from a different context field
 
   // Basic calculation examples (replace with actual logic)
-  // const calculatedEGI = parseFloat(incomeData.potentialGrossIncome || 0) - parseFloat(incomeData.vacancyCollectionLoss || 0); // Simplified
+  // These calculations should also use context data when available
+  // const calculatedEGI = parseFloat(reportData.incomeApproach?.potentialGrossIncome || 0) - parseFloat(reportData.incomeApproach?.vacancyCollectionLoss || 0); // Simplified
   // const calculatedTotalExpenses = /* Sum of expense items */;
   // const calculatedNOI = calculatedEGI - calculatedTotalExpenses;
   // const calculatedIndicatedValue = calculatedNOI / (parseFloat(incomeData.capitalizationRate || 1) / 100); // Avoid division by zero
@@ -137,7 +139,10 @@ function IncomeApproach({ data }) {
       </table>
 
       <h3>Summary of Income Approach</h3>
-      <p>{summary}</p>
+      <EditableField
+        initialContent={reportData.incomeApproachContent ?? '<p>[Enter Income Approach summary narrative here...]</p>'}
+        onChange={(newContent) => updateReportData('incomeApproachContent', newContent)}
+      />
     </div>
   );
 }

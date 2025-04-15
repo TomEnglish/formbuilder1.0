@@ -1,7 +1,8 @@
 import React from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import './EditableField.css'; // We'll create this for basic styling
+import MenuBar from './MenuBar'; // Import the MenuBar component
+import './EditableField.css';
 
 const EditableField = ({ initialContent, onChange }) => {
   const editor = useEditor({
@@ -22,7 +23,10 @@ const EditableField = ({ initialContent, onChange }) => {
   }
 
   return (
-    <EditorContent editor={editor} className="editable-field" />
+    <div className="editable-field-container">
+      <MenuBar editor={editor} />
+      <EditorContent editor={editor} className="editable-field" />
+    </div>
   );
 };
 

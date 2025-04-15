@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react'; // Import useContext
+import { ReportContext } from '../context/ReportDataContext'; // Import ReportContext
 import EditableField from './EditableField';
 import './Reconciliation.css';
 
-// Accept data and narrative props
-function Reconciliation({ data, narrativeContent, onNarrativeChange }) {
+// Removed props
+function Reconciliation() {
+  // Get context data
+  const { reportData, updateReportData } = useContext(ReportContext);
 
-  // Get values from data prop with fallbacks
-  const finalValue = data?.valueConclusion ?? "[Final Value]";
-  const effectiveDate = data?.effectiveDate ?? data?.appraisalDate ?? "[Effective Date]"; // Use appraisalDate as fallback
+  // Get values from reportData context with fallbacks
+  const finalValue = reportData.reconciliation?.finalValueConclusion ?? "[Final Value]"; // Assuming structure
+  const effectiveDate = reportData.effectiveDate ?? "[Effective Date]"; // Get from top level
 
   return (
     <div className="reconciliation-section section">
@@ -15,8 +18,8 @@ function Reconciliation({ data, narrativeContent, onNarrativeChange }) {
 
       <h3>Reconciliation Narrative</h3>
       <EditableField
-        initialContent={narrativeContent ?? '<p>[Enter reconciliation narrative here. Discuss the approaches considered, the weight given to each, and the rationale for the final value conclusion.]</p>'}
-        onChange={onNarrativeChange}
+        initialContent={reportData.reconciliationContent ?? '<p>[Enter reconciliation narrative here. Discuss the approaches considered, the weight given to each, and the rationale for the final value conclusion.]</p>'}
+        onChange={(newContent) => updateReportData('reconciliationContent', newContent)}
       />
 
       <h3>Final Conclusion</h3>

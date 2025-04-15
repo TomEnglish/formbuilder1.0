@@ -15,6 +15,9 @@ import CostApproach from './components/CostApproach';
 import IncomeApproach from './components/IncomeApproach';
 import ReportFooter from './components/ReportFooter';
 import ValuationMethodology from './components/ValuationMethodology';
+import LetterOfTransmittal from './components/LetterOfTransmittal'; // Import new component
+import TableOfContents from './components/TableOfContents'; // Import new component
+import Addenda from './components/Addenda'; // Import new component
 import { ReportDataProvider, ReportContext } from './context/ReportDataContext'; // Import ReportContext
 import InputForm from './components/InputForm.jsx';
 
@@ -28,6 +31,8 @@ function App() {
 
   // State for section visibility
   const [sectionVisibility, setSectionVisibility] = useState({
+    letterOfTransmittal: true, // Add state for new component
+    tableOfContents: true, // Add state for new component
     propertySummary: true,
     scopeOfWork: true,
     siteDescription: true,
@@ -40,6 +45,7 @@ function App() {
     incomeApproach: true,
     assumptionsAndLimitingConditions: true,
     certification: true,
+    addenda: true, // Add state for new component
   });
 
   // Handler to toggle section visibility
@@ -96,6 +102,8 @@ function App() {
         {/* Conditional Rendering based on loading/data state */}
         {/* Removed isLoading and appraisalData checks */}
           <div> {/* Container for report sections */}
+            {sectionVisibility.letterOfTransmittal && <LetterOfTransmittal />}
+            {sectionVisibility.tableOfContents && <TableOfContents sectionVisibility={sectionVisibility} />}
             {sectionVisibility.propertySummary && <PropertySummary />}
             {sectionVisibility.scopeOfWork && <ScopeOfWork />}
             {sectionVisibility.siteDescription && <SiteDescription
@@ -118,6 +126,7 @@ function App() {
             {sectionVisibility.incomeApproach && <IncomeApproach />}
             {sectionVisibility.assumptionsAndLimitingConditions && <AssumptionsAndLimitingConditions />}
             {sectionVisibility.certification && <Certification />}
+            {sectionVisibility.addenda && <Addenda />}
             <ReportFooter /> {/* Footer likely always visible */}
           </div>
         {/* Removed closing part of conditional rendering */}
