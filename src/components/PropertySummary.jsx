@@ -1,44 +1,35 @@
-import React from 'react';
-import EditableField from './EditableField'; // Import the new component
+import React, { useContext } from 'react'; // Import useContext
+import { ReportContext } from '../context/ReportDataContext.jsx'; // Import ReportContext
+import EditableField from './EditableField';
 
-function PropertySummary({ data, onDataChange }) { // Receive onDataChange prop
-  if (!data) {
-    return null; // Don't render if no data
-  }
+function PropertySummary() { // Remove props
+  const { reportData, updateReportData } = useContext(ReportContext); // Use context
 
-  // Destructure expected fields from the data object (first row of Excel)
-  // Use keys likely found in Excel, provide defaults
-  const {
-    'Property Address': propertyAddress = 'N/A',
-    'Value Conclusion': valueConclusion = 'N/A', // Assuming this key exists
-    'Property Type': propertyType = 'N/A',
-    'Year Built': yearBuilt = 'Unknown'
-  } = data || {}; // Use empty object fallback if data is null/undefined after initial check
+  // Removed old destructuring and if (!data) check
 
-  const handlePropertyTypeChange = (newContent) => {
-    // Call the function passed from App.jsx to update the state
-    // Use the correct key ('Property Type') when updating state
-    onDataChange('Property Type', newContent);
-  };
-
-  const handleYearBuiltChange = (newContent) => {
-    // Call the function passed from App.jsx to update the state
-    // Use the correct key ('Year Built') when updating state
-    onDataChange('Year Built', newContent);
-  };
+  // Removed handlePropertyTypeChange and handleYearBuiltChange
 
   return (
     <div className="property-summary">
       <h2>Property Summary</h2>
-      <p><strong>Property Address:</strong> {propertyAddress}</p>
-      <p><strong>Value Conclusion:</strong> {valueConclusion}</p>
+      {/* Updated to use reportData from context */}
+      <p><strong>Property Address:</strong> {reportData.propertyAddress || 'N/A'}</p>
+      {/* Removed Value Conclusion paragraph */}
       <div>
         <strong>Property Type:</strong>
-        <EditableField initialContent={String(propertyType)} onChange={handlePropertyTypeChange} />
+        {/* Updated EditableField to use context */}
+        <EditableField
+          value={reportData.propertyType || ''}
+          onChange={(newContent) => updateReportData('propertyType', newContent)}
+        />
       </div>
       <div>
         <strong>Year Built:</strong>
-        <EditableField initialContent={String(yearBuilt)} onChange={handleYearBuiltChange} />
+        {/* Updated EditableField to use context */}
+        <EditableField
+          value={reportData.yearBuilt || ''}
+          onChange={(newContent) => updateReportData('yearBuilt', newContent)}
+        />
       </div>
     </div>
   );

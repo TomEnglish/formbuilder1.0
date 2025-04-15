@@ -1,14 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react'; // Import useContext
+import { ReportContext } from '../context/ReportDataContext.jsx'; // Import ReportContext
 import EditableField from './EditableField';
 import companyLogo from '../assets/Logo.png'; // Import the logo
 import './ReportHeader.css'; // Import CSS for styling
 
-function ReportHeader({ data, onDataChange, sectionVisibility, onToggleSection }) { // Removed file props
+function ReportHeader({ sectionVisibility, onToggleSection }) { // Removed data and onDataChange props
 
-  // Destructure data only if it exists, otherwise use defaults directly
-  const clientName = data?.clientName || 'N/A';
-  const propertyAddress = data?.propertyAddress || 'N/A';
-  const appraisalDate = data?.appraisalDate || 'N/A';
+  const { reportData, updateReportData } = useContext(ReportContext); // Use context
 
 
   // Define user-friendly names for sections
@@ -25,11 +23,6 @@ function ReportHeader({ data, onDataChange, sectionVisibility, onToggleSection }
     incomeApproach: 'Income Approach',
     assumptionsAndLimitingConditions: 'Assumptions & Limiting Conditions',
     certification: 'Certification',
-  };
-
-  const handleClientNameChange = (newContent) => {
-    // Call the function passed from App.jsx to update the state
-    onDataChange('clientName', newContent);
   };
 
   return (
@@ -63,17 +56,15 @@ function ReportHeader({ data, onDataChange, sectionVisibility, onToggleSection }
       {/* Removed File Input Section */}
 
       {/* Only show client info if data is loaded */}
-      {data && (
         <div className="client-info"> {/* Renamed div for clarity */}
           <div> {/* Keep client editable */}
             <strong>Client:</strong>
-            {/* Pass clientName from data if available, otherwise empty/default */}
-            <EditableField initialContent={clientName} onChange={handleClientNameChange} />
+            {/* Use reportData from context */}
+            <EditableField value={reportData.clientName || ''} onChange={(newContent) => updateReportData('clientName', newContent)} />
           </div>
-          <p><strong>Property Address:</strong> {propertyAddress}</p>
-          <p><strong>Date of Appraisal:</strong> {appraisalDate}</p>
+          <p><strong>Property Address:</strong> {reportData.propertyAddress || 'N/A'}</p>
+          <p><strong>Effective Date:</strong> {reportData.effectiveDate || 'N/A'}</p> {/* Changed to Effective Date */}
         </div>
-      )}
     </div>
   );
 }
