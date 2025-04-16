@@ -1,12 +1,15 @@
 import React, { useContext } from 'react'; // Import useContext
 import EditableField from './EditableField';
 import { ReportContext } from '../context/ReportDataContext.jsx'; // Import ReportContext
+import { ValidationContext } from '../context/ValidationContext.jsx'; // Import ValidationContext
 import './SiteDescription.css'; // Import the CSS file
 
 // Removed props: data, narrativeContent, onNarrativeChange
 function SiteDescription() {
   // Get reportData and update function from context
   const { reportData, updateReportData } = useContext(ReportContext);
+  // Get validation functions and errors from context
+  const { validateField, validationErrors } = useContext(ValidationContext);
 
   // Removed prop-based destructuring
 
@@ -17,14 +20,89 @@ function SiteDescription() {
       <h3>Site Details</h3>
       <div className="site-details">
         {/* Use data from context */}
+        {/* Note: Address and Parcel # are static for now as per original code */}
         <div className="detail-item"><span className="detail-label">Address:</span> <span className="detail-value">2221 Oak Park Blvd, Lake Charles, LA 70601</span></div>
         <div className="detail-item"><span className="detail-label">Parcel #:</span> <span className="detail-value">00431036</span></div>
-        <div className="detail-item"><span className="detail-label">Site Area:</span> <span className="detail-value">33,360 SF (0.766 acres)</span></div>
-        <div className="detail-item"><span className="detail-label">Zoning Classification:</span> <span className="detail-value">(MU) Mixed Use & (RES) Residential</span></div>
-        <div className="detail-item"><span className="detail-label">Utilities - Water:</span> <span className="detail-value">Public</span></div>
-        <div className="detail-item"><span className="detail-label">Utilities - Sewer:</span> <span className="detail-value">Public</span></div>
-        <div className="detail-item"><span className="detail-label">Utilities - Electric:</span> <span className="detail-value">Available</span></div>
-        <div className="detail-item"><span className="detail-label">Utilities - Gas:</span> <span className="detail-value">Available</span></div>
+        <div className="detail-item">
+          <label htmlFor="siteArea" className="detail-label">Site Area:</label>
+          <input
+            type="text"
+            id="siteArea"
+            name="siteArea"
+            className="detail-value"
+            value={reportData.siteArea || ''}
+            onChange={(e) => {
+              const { name, value } = e.target;
+              updateReportData(name, value);
+              validateField(name, value, ['numerical']); // Apply numerical validation
+            }}
+          />
+          {validationErrors.siteArea && <div className="error-message">{validationErrors.siteArea}</div>}
+        </div>
+        <div className="detail-item">
+          <label htmlFor="zoningClassification" className="detail-label">Zoning Classification:</label>
+          <input
+            type="text"
+            id="zoningClassification"
+            name="zoningClassification"
+            className="detail-value"
+            value={reportData.zoningClassification || ''}
+            onChange={(e) => {
+              const { name, value } = e.target;
+              updateReportData(name, value);
+              validateField(name, value, ['required']); // Apply required validation
+            }}
+          />
+          {validationErrors.zoningClassification && <div className="error-message">{validationErrors.zoningClassification}</div>}
+        </div>
+        <div className="detail-item">
+          <label htmlFor="utilitiesWater" className="detail-label">Utilities - Water:</label>
+          <input
+            type="text"
+            id="utilitiesWater"
+            name="utilitiesWater"
+            className="detail-value"
+            value={reportData.utilitiesWater || ''}
+            onChange={(e) => updateReportData('utilitiesWater', e.target.value)}
+          />
+          {/* No specific validation requested */}
+        </div>
+        <div className="detail-item">
+          <label htmlFor="utilitiesSewer" className="detail-label">Utilities - Sewer:</label>
+          <input
+            type="text"
+            id="utilitiesSewer"
+            name="utilitiesSewer"
+            className="detail-value"
+            value={reportData.utilitiesSewer || ''}
+            onChange={(e) => updateReportData('utilitiesSewer', e.target.value)}
+          />
+          {/* No specific validation requested */}
+        </div>
+        <div className="detail-item">
+          <label htmlFor="utilitiesElectric" className="detail-label">Utilities - Electric:</label>
+          <input
+            type="text"
+            id="utilitiesElectric"
+            name="utilitiesElectric"
+            className="detail-value"
+            value={reportData.utilitiesElectric || ''}
+            onChange={(e) => updateReportData('utilitiesElectric', e.target.value)}
+          />
+          {/* No specific validation requested */}
+        </div>
+        <div className="detail-item">
+          <label htmlFor="utilitiesGas" className="detail-label">Utilities - Gas:</label>
+          <input
+            type="text"
+            id="utilitiesGas"
+            name="utilitiesGas"
+            className="detail-value"
+            value={reportData.utilitiesGas || ''}
+            onChange={(e) => updateReportData('utilitiesGas', e.target.value)}
+          />
+          {/* No specific validation requested */}
+        </div>
       </div>
 
       <h3>Narrative Description</h3>

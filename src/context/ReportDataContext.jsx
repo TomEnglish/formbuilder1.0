@@ -15,8 +15,46 @@ const initialState = {
   letterOfTransmittalContent: '<p>Enter content here...</p>',
   salesComparisonContent: '<p>Enter content here...</p>',
   costApproachContent: '<p>Enter content here...</p>',
+  // Cost Approach Data (Detailed Fields)
+  costApproachData: {
+    siteValue: '',
+    improvementCostNewSource: '', // e.g., Marshall & Swift
+    improvementCostNewAmount: '',
+    physicalDeteriorationPercent: '',
+    physicalDeteriorationAmount: '',
+    functionalObsolescencePercent: '',
+    functionalObsolescenceAmount: '',
+    externalObsolescencePercent: '',
+    externalObsolescenceAmount: '',
+    // Calculated fields might not need explicit state if derived on render
+    // totalDepreciation: '', // Example: Calculated
+    // depreciatedCostImprovements: '', // Example: Calculated
+    asIsMarketValueSiteImprovements: '',
+    // indicatedValueByCostApproach: '', // Example: Calculated
+  },
   incomeApproachContent: '<p>Enter content here...</p>',
+  // Income Approach Data (Detailed Fields)
+  incomeApproach: {
+    potentialGrossIncome: '',
+    vacancyCollectionLoss: '',
+    effectiveGrossIncome: '', // Calculated, but good to store the result
+    operatingExpenses: {
+      realEstateTaxes: '',
+      insurance: '',
+      utilities: '',
+      management: '',
+      repairsMaintenance: '',
+      reserves: '',
+      other: '',
+      total: '', // Calculated, but good to store the result
+    },
+    netOperatingIncome: '', // Calculated, but good to store the result
+    capitalizationRate: '',
+    indicatedValueByIncomeApproach: '', // Calculated, but good to store the result
+  },
   reconciliationContent: '<p>Enter content here...</p>',
+  // Sales Comparison Approach Data (Grid)
+  salesComparables: [], // Array to hold subject + comparable objects
   // Property Summary Data
   propertyType: '',
   yearBuilt: '',

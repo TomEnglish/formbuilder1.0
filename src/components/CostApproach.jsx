@@ -1,110 +1,305 @@
-import React, { useContext } from 'react'; // Import useContext
-import { ReportContext } from '../context/ReportDataContext'; // Import ReportContext
-import EditableField from './EditableField'; // Import EditableField
+import React, { useState, useContext, useEffect } from 'react';
+import { ReportContext } from '../context/ReportDataContext';
+import { ValidationContext } from '../context/ValidationContext'; // Import ValidationContext
+import EditableField from './EditableField';
 import './CostApproach.css';
 
-// Removed data prop
 function CostApproach() {
-  // Get context data
   const { reportData, updateReportData } = useContext(ReportContext);
+  const { validateField, validationErrors, isFormValid } = useContext(ValidationContext); // Get validation context
 
-  // Placeholder values for display - these should eventually come from context/state
-  const siteValue = reportData.costApproach?.siteValue ?? "$250,000";
-  const improvementCostNew = reportData.costApproach?.improvementCostNew ?? "$1,800,000";
-  const physicalDeterioration = reportData.costApproach?.physicalDeterioration ?? "$450,000";
-  const functionalObsolescence = reportData.costApproach?.functionalObsolescence ?? "$100,000";
-  const externalObsolescence = reportData.costApproach?.externalObsolescence ?? "$0";
-  const totalDepreciation = reportData.costApproach?.totalDepreciation ?? "$550,000";
-  const depreciatedCostImprovements = reportData.costApproach?.depreciatedCostImprovements ?? "$1,250,000";
-  const asIsMarketValueSiteImprovements = reportData.costApproach?.asIsMarketValueSiteImprovements ?? "$0";
-  const indicatedValueByCostApproach = reportData.costApproach?.indicatedValueByCostApproach ?? "$1,450,000";
-  // Summary narrative comes from a different context field
+  // Initialize local state from global context or defaults
+  const initialData = reportData.costApproachData || {
+    siteValue: '',
+    improvementCostNewSource: '',
+    improvementCostNewAmount: '',
+    physicalDeteriorationPercent: '',
+    physicalDeteriorationAmount: '',
+    functionalObsolescencePercent: '',
+    functionalObsolescenceAmount: '',
+    externalObsolescencePercent: '',
+    externalObsolescenceAmount: '',
+    asIsMarketValueSiteImprovements: '',
+  };
 
-  // Basic calculation example (replace with actual logic if needed)
-  // Note: In a real app, calculations might be more complex or done elsewhere
-  // These calculations should also use context data when available
-  // const calculatedTotalDepreciation = parseFloat(costData.physicalDeterioration || 0) + parseFloat(costData.functionalObsolescence || 0) + parseFloat(costData.externalObsolescence || 0);
-  // const calculatedDepreciatedCost = parseFloat(costData.improvementCostNew || 0) - calculatedTotalDepreciation;
-  // const calculatedIndicatedValue = parseFloat(costData.siteValue || 0) + calculatedDepreciatedCost + parseFloat(costData.asIsMarketValueSiteImprovements || 0);
+  const [costData, setCostData] = useState(initialData);
+  const [saveStatus, setSaveStatus] = useState(''); // For save feedback
+
+  // Calculated values - derived from local state
+  const [calculatedValues, setCalculatedValues] = useState({
+    totalDepreciation: 0,
+    depreciatedCostImprovements: 0,
+    indicatedValueByCostApproach: 0,
+  });
+
+  // --- Input Change Handler ---
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCostData(prevData => ({
+      ...prevData,
+      [name]: value,
+    }));
+    // Optionally clear validation error on change
+    validateField(name, value, {}); // Clear specific error if desired, or rely on blur
+    setSaveStatus(''); // Clear save status on new change
+  };
+
+  // --- Validation on Blur ---
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    let rules = {};
+    // Apply numerical validation to amount/value fields
+    if (name.includes('Amount') || name.includes('Value') || name.includes('Percent')) {
+        rules.numerical = true;
+    }
+    // Add required validation if needed for specific fields (example)
+    if (name === 'siteValue' || name === 'improvementCostNewAmount') {
+        rules.required = true;
+    }
+    validateField(name, value, rules);
+  };
+
+  // --- Calculations ---
+  useEffect(() => {
+    const siteVal = parseFloat(costData.siteValue) || 0;
+    const costNew = parseFloat(costData.improvementCostNewAmount) || 0;
+    const physDeter = parseFloat(costData.physicalDeteriorationAmount) || 0;
+    const funcObs = parseFloat(costData.functionalObsolescenceAmount) || 0;
+    const extObs = parseFloat(costData.externalObsolescenceAmount) || 0;
+    const siteImpr = parseFloat(costData.asIsMarketValueSiteImprovements) || 0;
+
+    const totalDep = physDeter + funcObs + extObs;
+    const depCost = costNew - totalDep;
+    const indicatedValue = siteVal + depCost + siteImpr;
+
+    setCalculatedValues({
+      totalDepreciation: totalDep,
+      depreciatedCostImprovements: depCost,
+      indicatedValueByCostApproach: indicatedValue,
+    });
+  }, [costData]); // Recalculate when costData changes
+
+  // --- Save Handler ---
+  const handleSave = () => {
+    // Trigger validation for all fields before saving
+    let allValid = true;
+    const fieldsToValidate = [
+        { name: 'siteValue', rules: { required: true, numerical: true } },
+        { name: 'improvementCostNewAmount', rules: { required: true, numerical: true } },
+        { name: 'physicalDeteriorationAmount', rules: { numerical: true } },
+        { name: 'functionalObsolescenceAmount', rules: { numerical: true } },
+        { name: 'externalObsolescenceAmount', rules: { numerical: true } },
+        { name: 'asIsMarketValueSiteImprovements', rules: { numerical: true } },
+        // Add other fields as needed
+    ];
+
+    fieldsToValidate.forEach(({ name, rules }) => {
+        if (!validateField(name, costData[name] || '', rules)) {
+            allValid = false;
+        }
+    });
+
+    // Check overall form validity (might be slightly delayed, manual check is safer)
+    // console.log("Is form valid (context):", isFormValid()); // Context check
+
+    if (allValid) {
+      console.log("Saving Cost Approach Data:", costData);
+      updateReportData('costApproachData', costData);
+      setSaveStatus('Cost Approach data saved successfully!');
+      // Optionally clear local validation errors after successful save
+      // clearAllValidationErrors(); // Assuming a function exists in ValidationContext
+    } else {
+      console.error("Validation errors prevent saving Cost Approach data.");
+      setSaveStatus('Please fix validation errors before saving.');
+    }
+  };
+
+  // Helper to format currency
+  const formatCurrency = (value) => {
+    const number = parseFloat(value);
+    if (isNaN(number)) return '$0';
+    return number.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  };
 
   return (
     <div className="cost-approach">
       <h2>Cost Approach</h2>
 
-      {/* Added Boilerplate Description Placeholder */}
+      {/* Boilerplate Description */}
       <p>
-        The Cost Approach was developed to estimate the value of the subject property by determining the current cost to construct a replica of the improvements, less depreciation, plus the land value. This approach is particularly relevant given the property's ongoing renovations.
+        The Cost Approach was developed to estimate the value of the subject property by determining the current cost to construct a replica of the improvements, less depreciation, plus the land value.
       </p>
       <hr />
-      <p>
-        The land value was estimated at $250,000 based on recent sales of comparable sites in the area. The replacement cost of improvements was calculated at $1,800,000 using Marshall & Swift data adjusted for local construction costs.
-      </p>
-      <p>
-        Depreciation was analyzed as follows:
-      </p>
-      <ul>
-        <li><strong>Physical Deterioration:</strong> $450,000 (25% of replacement cost) accounting for the building's age and condition prior to renovation</li>
-        <li><strong>Functional Obsolescence:</strong> $100,000 (5.5% of replacement cost) for outdated systems being replaced</li>
-        <li><strong>External Obsolescence:</strong> None - the property is in a stable market area</li>
-      </ul>
-      <p>
-        The total depreciation of $550,000 results in a depreciated improvement value of $1,250,000. When added to the land value, this indicates a property value of $1,450,000 via the Cost Approach.
-      </p>
-      <hr />
-      <h3>Cost Breakdown</h3>
 
+      <h3>Cost Breakdown</h3>
       <table className="cost-approach-table">
         <tbody>
           <tr>
             <td>Estimated Site Value</td>
-            <td>{siteValue}</td>
+            <td>
+              <input
+                type="number"
+                name="siteValue"
+                value={costData.siteValue}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Enter Site Value"
+                className={validationErrors.siteValue ? 'invalid' : ''}
+              />
+              {validationErrors.siteValue && <span className="error-message">{validationErrors.siteValue}</span>}
+            </td>
+          </tr>
+          <tr>
+            <td>Source of Improvement Cost New</td>
+             <td>
+              <input
+                type="text"
+                name="improvementCostNewSource"
+                value={costData.improvementCostNewSource}
+                onChange={handleChange}
+                onBlur={handleBlur} // Basic validation if needed
+                placeholder="e.g., Marshall & Swift"
+                // Add validation class if needed
+              />
+               {/* Add error span if needed */}
+            </td>
           </tr>
           <tr>
             <td>Estimated Cost New of Improvements</td>
-            <td>{improvementCostNew}</td>
+            <td>
+              <input
+                type="number"
+                name="improvementCostNewAmount"
+                value={costData.improvementCostNewAmount}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Enter Cost New"
+                className={validationErrors.improvementCostNewAmount ? 'invalid' : ''}
+              />
+              {validationErrors.improvementCostNewAmount && <span className="error-message">{validationErrors.improvementCostNewAmount}</span>}
+            </td>
+          </tr>
+          {/* --- Depreciation Section --- */}
+          <tr className="section-header"><td colSpan="2">Less Depreciation:</td></tr>
+          <tr className="sub-item">
+            <td>Physical Deterioration (% / Amt)</td>
+            <td>
+              <input
+                type="number"
+                name="physicalDeteriorationPercent"
+                value={costData.physicalDeteriorationPercent}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="%"
+                style={{width: '50px', marginRight: '5px'}}
+                className={validationErrors.physicalDeteriorationPercent ? 'invalid' : ''}
+              />
+              <input
+                type="number"
+                name="physicalDeteriorationAmount"
+                value={costData.physicalDeteriorationAmount}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Amount"
+                 className={validationErrors.physicalDeteriorationAmount ? 'invalid' : ''}
+              />
+              {validationErrors.physicalDeteriorationPercent && <span className="error-message">{validationErrors.physicalDeteriorationPercent}</span>}
+               {validationErrors.physicalDeteriorationAmount && <span className="error-message">{validationErrors.physicalDeteriorationAmount}</span>}
+            </td>
           </tr>
           <tr className="sub-item">
-            <td>Less: Physical Deterioration</td>
-            <td>({physicalDeterioration})</td>
+            <td>Functional Obsolescence (% / Amt)</td>
+             <td>
+               <input
+                type="number"
+                name="functionalObsolescencePercent"
+                value={costData.functionalObsolescencePercent}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="%"
+                style={{width: '50px', marginRight: '5px'}}
+                className={validationErrors.functionalObsolescencePercent ? 'invalid' : ''}
+              />
+              <input
+                type="number"
+                name="functionalObsolescenceAmount"
+                value={costData.functionalObsolescenceAmount}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Amount"
+                className={validationErrors.functionalObsolescenceAmount ? 'invalid' : ''}
+              />
+              {validationErrors.functionalObsolescencePercent && <span className="error-message">{validationErrors.functionalObsolescencePercent}</span>}
+              {validationErrors.functionalObsolescenceAmount && <span className="error-message">{validationErrors.functionalObsolescenceAmount}</span>}
+            </td>
           </tr>
           <tr className="sub-item">
-            <td>Less: Functional Obsolescence</td>
-            <td>({functionalObsolescence})</td>
-          </tr>
-          <tr className="sub-item">
-            <td>Less: External Obsolescence</td>
-            <td>({externalObsolescence})</td>
+            <td>External Obsolescence (% / Amt)</td>
+             <td>
+               <input
+                type="number"
+                name="externalObsolescencePercent"
+                value={costData.externalObsolescencePercent}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="%"
+                style={{width: '50px', marginRight: '5px'}}
+                className={validationErrors.externalObsolescencePercent ? 'invalid' : ''}
+              />
+              <input
+                type="number"
+                name="externalObsolescenceAmount"
+                value={costData.externalObsolescenceAmount}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Amount"
+                className={validationErrors.externalObsolescenceAmount ? 'invalid' : ''}
+              />
+              {validationErrors.externalObsolescencePercent && <span className="error-message">{validationErrors.externalObsolescencePercent}</span>}
+              {validationErrors.externalObsolescenceAmount && <span className="error-message">{validationErrors.externalObsolescenceAmount}</span>}
+            </td>
           </tr>
           <tr className="total-item">
             <td>Total Depreciation</td>
-            <td>({totalDepreciation})</td>
+            {/* Display calculated value */}
+            <td>({formatCurrency(calculatedValues.totalDepreciation)})</td>
           </tr>
+          {/* --- End Depreciation --- */}
           <tr>
             <td>Depreciated Cost of Improvements</td>
-            <td>{depreciatedCostImprovements}</td>
+            {/* Display calculated value */}
+            <td>{formatCurrency(calculatedValues.depreciatedCostImprovements)}</td>
           </tr>
           <tr>
             <td>Estimated "As Is" Market Value of Site Improvements</td>
-            <td>{asIsMarketValueSiteImprovements}</td>
+            <td>
+               <input
+                type="number"
+                name="asIsMarketValueSiteImprovements"
+                value={costData.asIsMarketValueSiteImprovements}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Enter Site Impr. Value"
+                className={validationErrors.asIsMarketValueSiteImprovements ? 'invalid' : ''}
+              />
+              {validationErrors.asIsMarketValueSiteImprovements && <span className="error-message">{validationErrors.asIsMarketValueSiteImprovements}</span>}
+            </td>
           </tr>
           <tr className="final-value">
             <td>Indicated Value by Cost Approach</td>
-            <td>{indicatedValueByCostApproach}</td>
+            {/* Display calculated value */}
+            <td>{formatCurrency(calculatedValues.indicatedValueByCostApproach)}</td>
           </tr>
         </tbody>
       </table>
 
+      <button onClick={handleSave} className="save-button">Save Cost Approach Data</button>
+      {saveStatus && <p className={`save-status ${saveStatus.includes('error') ? 'error' : 'success'}`}>{saveStatus}</p>}
+
+
       <h3>Summary of Cost Approach</h3>
       <EditableField
-        initialContent={reportData.costApproachContent ?? `
-          <p>The Cost Approach indicates a value of $1,450,000 for the subject property. This conclusion is supported by:</p>
-          <ul>
-            <li>Land value derived from comparable vacant land sales</li>
-            <li>Replacement cost based on Marshall & Swift data for Class C masonry construction</li>
-            <li>Depreciation analysis reflecting the property's pre-renovation condition</li>
-          </ul>
-          <p>While the Cost Approach provides a useful benchmark, it was given less weight than the Sales Comparison Approach in the final reconciliation due to the availability of strong comparable sales data.</p>
-        `}
+        initialContent={reportData.costApproachContent ?? `<p>Default summary...</p>`}
         onChange={(newContent) => updateReportData('costApproachContent', newContent)}
       />
     </div>
