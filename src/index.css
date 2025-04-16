@@ -1,15 +1,47 @@
+:root {
+  /* Color Palette */
+  --color-background: #ffffff;
+  --color-text: #213547;
+  --color-border: #cccccc;
+  --color-input-bg: #ffffff;
+  --color-button-bg: #f0f0f0;
+  --color-button-hover-bg: #e0e0e0;
+  --color-error: #dc3545;
+  --primary-color: #337aff; /* Added brand primary color */
+  --primary-color-hover: #002244; /* Added hover state for primary */
+
+  /* Typography */
+  --font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-family-serif-print: 'Times New Roman', Times, serif;
+  --line-height-base: 1.5;
+  --line-height-print: 1.2;
+  --font-size-base: 16px; /* Base font size for rem calculations */
+  --font-size-print: 12pt;
+
+  /* Spacing */
+  --spacing-unit: 8px; /* Base unit for margins/padding */
+  --spacing-xs: calc(var(--spacing-unit) * 0.5);  /* 4px */
+  --spacing-sm: var(--spacing-unit);             /* 8px */
+  --spacing-md: calc(var(--spacing-unit) * 2);   /* 16px */
+  --spacing-lg: calc(var(--spacing-unit) * 3);   /* 24px */
+  --spacing-xl: calc(var(--spacing-unit) * 4);   /* 32px */
+
+  /* Borders */
+  --border-radius: 4px;
+}
+
 /* Reset default body margin */
 body {
   margin: 0;
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif; /* Keep a basic font stack */
-  line-height: 1.5;
-  background-color: #ffffff; /* Set a default light background */
-  color: #213547; /* Set default text color */
+  font-family: var(--font-family-sans);
+  line-height: var(--line-height-base);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
 }
 
-/* Keep basic link styling if desired, or remove */
-/*
-a {
+/* Basic Link Styling (Optional - uncomment if needed) */
+/* a {
   font-weight: 500;
   color: #646cff;
   text-decoration: inherit;
@@ -23,10 +55,12 @@ a:hover {
 /* Print-specific styles */
 @media print {
   body {
-    background-color: #ffffff; /* Ensure white background for print */
+    background-color: var(--color-background); /* Ensure white background for print */
     color: #000000; /* Ensure black text for print */
-    font-family: 'Times New Roman', Times, serif; /* Use a serif font for print */
-    font-size: 12pt; /* Standard print font size */
-    line-height: 1.2;
+    font-family: var(--font-family-serif-print);
+    font-size: var(--font-size-print);
+    line-height: var(--line-height-print);
   }
+  /* Add rules here to hide non-essential elements during print if needed */
+  /* e.g., .menu-bar, .some-other-ui-element { display: none; } */
 }

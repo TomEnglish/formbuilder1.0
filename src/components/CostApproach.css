@@ -1,61 +1,27 @@
-/* Styles for CostApproach component */
-.cost-approach {
-  margin-bottom: 20px;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
+/*
+ * Component-specific styles for CostApproach.
+ * Most base styling (padding, margins, borders, typography)
+ * is now handled by the global styles in src/App.css
+ * targeting the .cost-approach class.
+ * Add specific overrides or unique styles here if needed.
+ */
 
-.cost-approach h2 {
-  margin-top: 0;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-}
-
-.cost-approach h3 {
-  margin-top: 20px;
-  margin-bottom: 10px;
-  font-size: 1.1em;
-}
-
-.cost-approach-table {
+/* Example: If Cost Approach needs specific table styling */
+/*
+.cost-approach table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 15px;
+  margin-bottom: var(--spacing-md);
 }
 
-.cost-approach-table td {
-  padding: 6px 8px;
-  border: 1px solid #ddd;
-  vertical-align: top;
+.cost-approach th,
+.cost-approach td {
+  border: 1px solid var(--color-border);
+  padding: var(--spacing-sm);
+  text-align: left;
 }
 
-.cost-approach-table td:first-child {
-  width: 60%; /* Adjust as needed */
-  font-weight: normal;
+.cost-approach th {
+  background-color: #f8f9fa;
 }
-
-.cost-approach-table td:last-child {
-  text-align: right;
-  font-weight: bold;
-}
-
-.cost-approach-table .sub-item td:first-child {
-  padding-left: 25px; /* Indent depreciation items */
-}
-
-.cost-approach-table .total-item td {
-  border-top: 2px solid #aaa;
-  font-weight: bold;
-}
-
-.cost-approach-table .final-value td {
-  border-top: 2px solid #000;
-  font-weight: bold;
-  font-size: 1.1em;
-}
-
-.cost-approach p {
-  margin: 5px 0;
-  line-height: 1.4;
-}
+*/

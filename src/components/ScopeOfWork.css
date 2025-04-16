@@ -1,29 +1,7 @@
-/* Styles for ScopeOfWork component */
-.scope-of-work {
-  margin-bottom: 20px;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.scope-of-work h2 {
-  margin-top: 0;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-}
-
-.scope-of-work h3 {
-  margin-top: 15px;
-  margin-bottom: 5px;
-  font-size: 1.1em;
-}
-
-.scope-of-work p {
-  margin: 5px 0;
-  line-height: 1.4;
-}
-
-.scope-of-work strong {
-  display: inline-block;
-  min-width: 180px; /* Adjust as needed for alignment */
-}
+/*
+ * Component-specific styles for ScopeOfWork.
+ * Most base styling (padding, margins, borders, typography)
+ * is now handled by the global styles in src/App.css
+ * targeting the .scope-of-work class.
+ * Add specific overrides or unique styles here if needed.
+ */

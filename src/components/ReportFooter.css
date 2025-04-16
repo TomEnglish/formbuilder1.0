@@ -1,30 +1,14 @@
-/* Styles for ReportFooter component */
+/*
+ * Component-specific styles for ReportFooter.
+ * Add specific overrides or unique styles here if needed.
+ * Consider if footer needs different padding/margins than standard sections.
+ */
+
 .report-footer {
-  display: none; /* Hidden by default in web view */
-  font-size: 9pt;
-  color: #555;
-}
-
-@media print {
-  .report-footer {
-    display: flex !important; /* Show in print */
-    justify-content: space-between;
-    align-items: center;
-    position: fixed; /* Fix to bottom of each printed page */
-    bottom: 0.5in; /* Position slightly above the physical bottom margin */
-    left: 1in;     /* Align with left page margin */
-    right: 1in;    /* Align with right page margin */
-    height: 0.5in; /* Define a height */
-    border-top: 1px solid #ccc;
-    padding-top: 5px;
-    background-color: #fff; /* Ensure background is white */
-    z-index: 10; /* Try to keep it above other content */
-  }
-
-  /* Add margin to the bottom of the main content area to avoid overlap */
-  /* This needs to target the container holding all the report sections */
-  /* Adjust the selector based on App.jsx structure if needed */
-  .report-section > div[ref] { /* Targeting the div with the ref */
-     padding-bottom: 1in; /* Add space equal to footer height + bottom margin */
-  }
+  margin-top: var(--spacing-xl); /* Ensure space above footer */
+  padding-top: var(--spacing-lg); /* Space within footer */
+  border-top: 1px solid var(--color-border); /* Separator line */
+  font-size: 0.85rem; /* Smaller text for footer */
+  color: #6c757d; /* Muted color */
+  text-align: center;
 }

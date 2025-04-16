@@ -1,29 +1,7 @@
-.assumptions-limiting-conditions {
-  padding: 15px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #f9f9f9;
-}
-
-.assumptions-limiting-conditions h2 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 1.4em;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-}
-
-.assumptions-limiting-conditions p {
-    margin-bottom: 10px;
-}
-
-.assumptions-limiting-conditions ul {
-  padding-left: 20px;
-  margin-top: 0;
-}
-
-.assumptions-limiting-conditions li {
-  margin-bottom: 8px;
-  line-height: 1.5;
-}
+/*
+ * Component-specific styles for AssumptionsAndLimitingConditions.
+ * Most base styling (padding, margins, borders, typography)
+ * is now handled by the global styles in src/App.css
+ * targeting the .assumptions-limiting-conditions class.
+ * Add specific overrides or unique styles here if needed.
+ */

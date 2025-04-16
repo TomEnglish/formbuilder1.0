@@ -1,31 +1,28 @@
-.table-of-contents {
-  margin: 1rem 0;
-  padding: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-}
+/*
+ * Component-specific styles for TableOfContents.
+ * Most base styling (padding, margins, borders, typography)
+ * is now handled by the global styles in src/App.css
+ * targeting the .table-of-contents class (or similar).
+ * Add specific overrides or unique styles here if needed.
+ */
 
-.table-of-contents h2 {
-  margin-top: 0;
-  font-size: 1.2rem;
-  color: #333;
-}
-
+/* Example: Styling for the TOC list */
+/*
 .table-of-contents ul {
-  list-style-type: none;
+  list-style: none;
   padding-left: 0;
-  margin: 0.5rem 0 0 0;
 }
 
 .table-of-contents li {
-  margin: 0.3rem 0;
+  margin-bottom: var(--spacing-sm);
 }
 
 .table-of-contents a {
-  color: #007bff;
   text-decoration: none;
+  color: var(--color-text);
 }
 
 .table-of-contents a:hover {
   text-decoration: underline;
 }
+*/

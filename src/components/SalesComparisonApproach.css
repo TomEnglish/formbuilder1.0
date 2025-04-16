@@ -1,52 +1,7 @@
-.sales-comparison-approach {
-  margin-bottom: 20px;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-}
-
-.sales-comparison-approach h2 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-}
-
-.sca-grid-container {
-  overflow-x: auto; /* Allows horizontal scrolling on smaller screens */
-}
-
-.sca-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-.sca-table th,
-.sca-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-  vertical-align: top; /* Align content to the top */
-}
-
-.sca-table th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-}
-
-.sca-table .feature-label {
-  font-weight: bold;
-  background-color: #f8f8f8;
-  min-width: 150px; /* Ensure feature labels have enough space */
-}
-
-/* Target the input within EditableField specifically for sizing */
-.sca-table td .editable-field input[type="text"] {
-  width: 100%; /* Make input take full cell width */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
-  padding: 4px;
-  border: 1px solid #ccc; /* Add a light border to inputs */
-  min-width: 80px; /* Minimum width for inputs */
-}
+/*
+ * Component-specific styles for SalesComparisonApproach.
+ * Most base styling (padding, margins, borders, typography)
+ * is now handled by the global styles in src/App.css
+ * targeting the .sales-comparison-approach class.
+ * Add specific overrides or unique styles here if needed.
+ */

@@ -1,27 +1,7 @@
-.site-description-section {
-  padding: 15px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-}
-
-.site-description-section h2 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 1.4em;
-  color: #333;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-}
-
-.site-details {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
-  gap: 15px; /* Spacing between fields */
-}
-
-/* Add some space below each editable field container if needed */
-.site-details > div {
-  margin-bottom: 5px;
-}
+/*
+ * Component-specific styles for SiteDescription.
+ * Most base styling (padding, margins, borders, typography)
+ * is now handled by the global styles in src/App.css
+ * targeting the .site-description-section class (or similar).
+ * Add specific overrides or unique styles here if needed.
+ */
