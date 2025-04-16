@@ -91,7 +91,7 @@ function CostApproach() {
 
     const totalDep = physDeterAmountCalc + funcObsAmountCalc + extObsAmountCalc;
     const depCost = costNew - totalDep;
-    const indicatedValue = siteVal + depCost + siteImpr;
+    const indicatedValue = siteVal + depCost; // Site Value + Depreciated Cost of Improvements
 
     setCalculatedValues({
       physicalDeteriorationCalculated: physDeterAmountCalc,

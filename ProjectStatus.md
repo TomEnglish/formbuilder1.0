@@ -47,40 +47,40 @@
     - [x] Implement basic UI for entering/displaying comparable sales data (local state)
     - [x] Implement field-level validation (required, numerical, date)
     - [x] Implement save mechanism (local state -> global context)
-    - [ ] Implement logic for adjustments
-    - [ ] Implement calculation for adjusted sale prices
-    - [ ] Implement reconciliation logic within Sales Comp section
+    - [x] Implement logic for adjustments
+    - [x] Implement calculation for adjusted sale prices
+    - [x] Implement reconciliation logic within Sales Comp section
 - [ ] **Cost Approach:**
     - [x] Implement basic UI for entering land value, cost data, depreciation factors (local state)
     - [x] Implement field-level validation (required, numerical)
     - [x] Implement save mechanism (local state -> global context)
     - [x] Implement calculation for Replacement Cost New (within component)
-    - [ ] Implement calculation for depreciation
-    - [ ] Implement summation logic
+    - [x] Implement calculation for depreciation
+    - [x] Implement summation logic
 - [ ] **Income Approach:**
     - [x] Implement basic UI for entering market rent, vacancy, expenses, rates (local state)
     - [x] Implement field-level validation (required, numerical)
     - [x] Implement save mechanism (local state -> global context)
     - [x] Implement calculation for PGI, EGI, NOI (within component)
-    - [ ] Implement Direct Capitalization calculation
+    - [x] Implement Direct Capitalization calculation
     - [ ] Implement DCF analysis (Optional/Advanced)
 - [ ] **Reconciliation:**
-    - [ ] Implement logic/UI to display values from the three approaches
-    - [ ] Implement logic/UI for final value conclusion analysis
+    - [x] Implement logic/UI to display values from the three approaches
+    - [x] Implement logic/UI for final value conclusion analysis
 
 ## Phase 5: Print Output Refinement
 - [x] Implement basic print trigger (`react-to-print`)
 - [x] Add initial `@media print` CSS rules (hide elements, basic margins, reset styles)
 - [x] Adjust layout width for print
-- [ ] Further refine print CSS for page breaks, headers/footers (if possible), and overall professional appearance
+- [x] Further refine print CSS for page breaks, headers/footers (if possible), and overall professional appearance
 - [ ] Test print output across different browsers
 
 ## Phase 6: Styling & Branding
 - [ ] Define/gather brand assets (logo, colors, fonts).
-- [ ] Update CSS (e.g., `index.css`, `App.css`) with brand colors and typography.
-- [ ] Integrate company logo (e.g., into `ReportHeader` or a dedicated app header).
+- [x] Update CSS (`index.css`) with primary brand color (`--primary-color: #337aff`).
+- [x] Integrate company logo: Increased size in `ReportHeader` and added small logo (`Logo48.ico`) to `ReportFooter`.
 - [ ] Refine overall UI element styling (buttons, inputs, containers) for professional look.
-- [ ] Ensure print styles also reflect branding where appropriate.
+- [x] Ensure print styles also reflect branding: Added print CSS for fixed footer logo (`ReportFooter.css`).
 
 ## Phase 7: Final Testing & Refinement
 - [ ] Cross-browser testing (Web view & Print)

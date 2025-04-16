@@ -341,7 +341,7 @@ tbody tr:hover {
     padding: 0 !important; /* Remove padding */
     margin: 0 0 var(--spacing-sm) 0 !important; /* Small bottom margin */
     border: none !important;
-    page-break-inside: avoid !important;
+    /* page-break-inside: avoid !important; Removed for more granular control */
     page-break-before: always !important;
     background-color: #fff !important;
     box-shadow: none !important;
@@ -361,6 +361,7 @@ tbody tr:hover {
     margin-top: var(--spacing-md);
     margin-bottom: var(--spacing-sm);
     font-weight: bold; /* Ensure headings are bold */
+    page-break-after: avoid; /* Keep headings with following content */
   }
   h1 { font-size: 16pt; }
   h2 { font-size: 14pt; }
@@ -385,6 +386,7 @@ tbody tr:hover {
   table {
     border: 1px solid #000 !important; /* Ensure black border for print */
     margin-bottom: var(--spacing-sm) !important; /* Smaller margin */
+    page-break-inside: avoid; /* Avoid breaking tables across pages */
   }
   th, td {
     border: 1px solid #ccc !important; /* Lighter grey border for cells */

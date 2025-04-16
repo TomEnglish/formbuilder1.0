@@ -61,6 +61,13 @@ a:hover {
     font-size: var(--font-size-print);
     line-height: var(--line-height-print);
   }
+
+  /* Prevent single lines at the start/end of pages */
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+
   /* Add rules here to hide non-essential elements during print if needed */
   /* e.g., .menu-bar, .some-other-ui-element { display: none; } */
 }

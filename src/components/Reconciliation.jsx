@@ -92,7 +92,7 @@ function Reconciliation() {
       </div>
       <hr />
 
-      <h3>Reconciliation Narrative</h3>
+      <h3>Final Reconciliation Narrative / Analysis and Conclusion</h3>
       <EditableField
         initialContent={reportData.reconciliationContent ?? '<p>[Enter reconciliation narrative here. Discuss the approaches considered, the weight given to each, and the rationale for the final value conclusion.]</p>'}
         onChange={handleNarrativeChange} // Only update context on change
@@ -104,7 +104,7 @@ function Reconciliation() {
 
       <h3>Final Conclusion</h3>
       <div className="final-value-input-section">
-         <label htmlFor="finalValueConclusion">Final Opinion of Value:</label>
+         <label htmlFor="finalValueConclusion">Final Concluded Market Value:</label>
          <input
             type="number"
             id="finalValueConclusion"
@@ -112,7 +112,7 @@ function Reconciliation() {
             value={finalValueInput}
             onChange={handleFinalValueChange}
             onBlur={handleFinalValueBlur} // Validate on blur
-            placeholder="Enter Final Value"
+            placeholder="Enter Final Concluded Market Value"
             className={validationErrors.finalValueConclusion ? 'invalid' : ''}
           />
           {validationErrors.finalValueConclusion && <span className="error-message">{validationErrors.finalValueConclusion}</span>}

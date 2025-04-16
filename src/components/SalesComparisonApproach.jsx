@@ -128,26 +128,101 @@ function SalesComparisonApproach() { // Removed data prop for now, using context
     const validationId = `salesComp_${localSalesData[compIndex].id}_${fieldKey}`;
     validateField(validationId, value, rules);
 
-    // Calculations are done during render, so no explicit recalculation needed here
+    // Trigger recalculation when inputs change (handled by useEffect)
   };
 
-   // --- Calculation Logic ---
-   // Helper to safely parse float, returning 0 if invalid
-   const parseFloatSafe = (value) => {
-       const parsed = parseFloat(value);
-       return isNaN(parsed) ? 0 : parsed;
-   };
+  // --- Calculation Logic ---
+  // Helper to safely parse float, returning 0 if invalid
+  const parseFloatSafe = (value) => {
+      const parsed = parseFloat(value);
+      return isNaN(parsed) ? 0 : parsed;
+  };
 
-   // Helper to compare condition strings (simple example)
-   const compareCondition = (compCondition, subjCondition) => {
-       const conditions = { "Poor": 1, "Fair": 2, "Average": 3, "Good": 4, "Excellent": 5 };
-       const compVal = conditions[compCondition] || 0;
-       const subjVal = conditions[subjCondition] || 0;
-       if (compVal === 0 || subjVal === 0) return 0; // Cannot compare if unknown
-       if (compVal < subjVal) return -1; // Comp is inferior
-       if (compVal > subjVal) return 1;  // Comp is superior
-       return 0; // Conditions are equal
-   };
+  // Helper to compare condition strings (simple example)
+  const compareCondition = (compCondition, subjCondition) => {
+      const conditions = { "Poor": 1, "Fair": 2, "Average": 3, "Good": 4, "Excellent": 5 };
+      const compVal = conditions[compCondition] || 0;
+      const subjVal = conditions[subjCondition] || 0;
+      if (compVal === 0 || subjVal === 0) return 0; // Cannot compare if unknown
+      if (compVal < subjVal) return -1; // Comp is inferior
+      if (compVal > subjVal) return 1;  // Comp is superior
+      return 0; // Conditions are equal
+  };
+
+  // --- Effect for Calculations ---
+  useEffect(() => {
+    const subjGLA = parseFloatSafe(subjectGLA);
+    const subjSite = parseFloatSafe(subjectSiteArea);
+    const subjCondition = subjectCondition; // String like "Good"
+
+    const needsUpdate = localSalesData.some((compData, index) => {
+        if (index === 0) return false; // Skip subject
+
+        const compSalePrice = parseFloatSafe(compData.sale_price);
+        const compGLA = parseFloatSafe(compData.gross_living_area_gla);
+        const compSiteSize = parseFloatSafe(compData.site_size);
+        const compCondition = compData.age_condition; // String like "Average"
+
+        // --- Perform Calculations ---
+        const glaAdjustment = (subjGLA > 0 && compGLA > 0)
+            ? (subjGLA - compGLA) * GLA_ADJUSTMENT_RATE
+            : 0;
+        const siteAdjustment = (subjSite > 0 && compSiteSize > 0)
+            ? (subjSite - compSiteSize) * SITE_ADJUSTMENT_RATE
+            : 0;
+        const conditionComparison = compareCondition(compCondition, subjCondition);
+        const conditionAdjustment = (compSalePrice > 0)
+            ? conditionComparison * CONDITION_ADJUSTMENT_PERCENT * compSalePrice
+            : 0;
+        const totalAdjustment = glaAdjustment + siteAdjustment + conditionAdjustment; // Add other adjustments here if needed
+        const finalAdjustedSalePrice = compSalePrice + totalAdjustment;
+        const adjustedSalePricePerSqFt = (compGLA > 0)
+            ? finalAdjustedSalePrice / compGLA
+            : 0;
+
+        // Check if calculated values differ from stored values
+        return compData.gla_adjustment !== glaAdjustment ||
+               compData.site_adjustment !== siteAdjustment ||
+               compData.condition_adjustment_calc !== conditionAdjustment ||
+               compData.total_adjustment !== totalAdjustment ||
+               compData.final_adjusted_sale_price !== finalAdjustedSalePrice ||
+               compData.adjusted_sale_price_per_sqft !== adjustedSalePricePerSqFt;
+    });
+
+
+    if (needsUpdate) {
+        const updatedData = localSalesData.map((compData, index) => {
+            if (index === 0) return compData; // Keep subject as is
+
+            const compSalePrice = parseFloatSafe(compData.sale_price);
+            const compGLA = parseFloatSafe(compData.gross_living_area_gla);
+            const compSiteSize = parseFloatSafe(compData.site_size);
+            const compCondition = compData.age_condition;
+
+            // --- Recalculate (same logic as above) ---
+            const glaAdjustment = (subjGLA > 0 && compGLA > 0) ? (subjGLA - compGLA) * GLA_ADJUSTMENT_RATE : 0;
+            const siteAdjustment = (subjSite > 0 && compSiteSize > 0) ? (subjSite - compSiteSize) * SITE_ADJUSTMENT_RATE : 0;
+            const conditionComparison = compareCondition(compCondition, subjCondition);
+            const conditionAdjustment = (compSalePrice > 0) ? conditionComparison * CONDITION_ADJUSTMENT_PERCENT * compSalePrice : 0;
+            const totalAdjustment = glaAdjustment + siteAdjustment + conditionAdjustment;
+            const finalAdjustedSalePrice = compSalePrice + totalAdjustment;
+            const adjustedSalePricePerSqFt = (compGLA > 0) ? finalAdjustedSalePrice / compGLA : 0;
+
+            // Return updated comparable data with calculated fields
+            return {
+                ...compData,
+                gla_adjustment: glaAdjustment,
+                site_adjustment: siteAdjustment,
+                condition_adjustment_calc: conditionAdjustment,
+                total_adjustment: totalAdjustment,
+                final_adjusted_sale_price: finalAdjustedSalePrice,
+                adjusted_sale_price_per_sqft: adjustedSalePricePerSqFt,
+            };
+        });
+        setLocalSalesData(updatedData);
+    }
+    // Dependencies: Recalculate when local data or relevant subject data changes
+  }, [localSalesData, subjectGLA, subjectSiteArea, subjectCondition, setLocalSalesData]);
 
 
   const handleSave = () => {
@@ -202,6 +277,20 @@ function SalesComparisonApproach() { // Removed data prop for now, using context
 
 
   // --- Rendering ---
+
+  // Calculate Adjusted Price Range
+  const adjustedPrices = localSalesData
+    .slice(1) // Skip subject property
+    .map(comp => parseFloatSafe(comp.final_adjusted_sale_price))
+    .filter(price => !isNaN(price) && price > 0); // Filter out invalid or zero prices
+
+  const minAdjustedPrice = adjustedPrices.length > 0 ? Math.min(...adjustedPrices) : 0;
+  const maxAdjustedPrice = adjustedPrices.length > 0 ? Math.max(...adjustedPrices) : 0;
+  const adjustedPriceRange = adjustedPrices.length > 0
+    ? `${minAdjustedPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })} - ${maxAdjustedPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`
+    : 'N/A';
+
+
   return (
     <section className="sales-comparison-approach">
       <h2>Sales Comparison Approach</h2>
@@ -265,74 +354,29 @@ function SalesComparisonApproach() { // Removed data prop for now, using context
                       isReadOnly = true; // Make subject column read-only in this grid view
                   }
 
-                  // --- Comparable Property Calculations (only if not subject) ---
-                  let calculatedAdjustments = {};
-                  if (!isSubject && !field.readOnly) {
-                      // Standard input field value
-                      displayValue = compData[field.key] ?? '';
-                  } else if (!isSubject && field.readOnly) {
-                      // --- Perform Calculations ---
-                      const compSalePrice = parseFloatSafe(compData.sale_price);
-                      const compGLA = parseFloatSafe(compData.gross_living_area_gla);
-                      const compSiteSize = parseFloatSafe(compData.site_size);
-                      const compCondition = compData.age_condition; // String like "Average"
-
-                      const subjGLA = parseFloatSafe(subjectGLA);
-                      const subjSite = parseFloatSafe(subjectSiteArea);
-                      const subjCondition = subjectCondition; // String like "Good"
-
-                      // GLA Adjustment: Subject GLA - Comp GLA * Rate
-                      const glaAdjustment = (subjGLA > 0 && compGLA > 0)
-                          ? (subjGLA - compGLA) * GLA_ADJUSTMENT_RATE
-                          : 0;
-
-                      // Site Adjustment: Subject Site - Comp Site * Rate
-                      const siteAdjustment = (subjSite > 0 && compSiteSize > 0)
-                          ? (subjSite - compSiteSize) * SITE_ADJUSTMENT_RATE
-                          : 0;
-
-                      // Condition Adjustment: Based on comparison (-1, 0, 1) * Percent * Comp Sale Price
-                      const conditionComparison = compareCondition(compCondition, subjCondition);
-                      const conditionAdjustment = (compSalePrice > 0)
-                          ? conditionComparison * CONDITION_ADJUSTMENT_PERCENT * compSalePrice
-                          : 0;
-                      // Note: This is a simple % adjustment. Negative if comp is better, positive if comp is worse.
-
-                      // --- Total Adjustment ---
-                      const totalAdjustment = glaAdjustment + siteAdjustment + conditionAdjustment; // Add other adjustments here
-
-                      // --- Adjusted Sale Price ---
-                      const finalAdjustedSalePrice = compSalePrice + totalAdjustment;
-
-                      // --- Adjusted Sale Price per SqFt ---
-                      const adjustedSalePricePerSqFt = (compGLA > 0)
-                          ? finalAdjustedSalePrice / compGLA
-                          : 0;
-
-                      calculatedAdjustments = {
-                          gla_adjustment: glaAdjustment,
-                          site_adjustment: siteAdjustment,
-                          condition_adjustment_calc: conditionAdjustment,
-                          total_adjustment: totalAdjustment,
-                          adjusted_sale_price_per_sqft: adjustedSalePricePerSqFt,
-                          final_adjusted_sale_price: finalAdjustedSalePrice,
-                      };
-
-                      // Set display value for calculated fields
-                      if (calculatedAdjustments.hasOwnProperty(field.key)) {
-                          const numericValue = calculatedAdjustments[field.key];
-                          // Format as currency for price/adjustment fields, fixed decimals for sqft
-                          if (['gla_adjustment', 'site_adjustment', 'condition_adjustment_calc', 'total_adjustment', 'final_adjusted_sale_price'].includes(field.key)) {
-                              displayValue = numericValue.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-                          } else if (field.key === 'adjusted_sale_price_per_sqft') {
-                              displayValue = numericValue.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                  // --- Comparable Property Display ---
+                  if (!isSubject) {
+                      if (field.readOnly) {
+                          // Display calculated/stored value for read-only fields
+                          const numericValue = compData[field.key]; // Read stored value
+                          if (numericValue !== undefined && numericValue !== null && !isNaN(numericValue)) {
+                              // Format as currency for price/adjustment fields, fixed decimals for sqft
+                              if (['gla_adjustment', 'site_adjustment', 'condition_adjustment_calc', 'total_adjustment', 'final_adjusted_sale_price'].includes(field.key)) {
+                                  displayValue = parseFloatSafe(numericValue).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                              } else if (field.key === 'adjusted_sale_price_per_sqft') {
+                                  displayValue = parseFloatSafe(numericValue).toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                              } else {
+                                  displayValue = numericValue; // Default numeric display
+                              }
                           } else {
-                              displayValue = numericValue; // Default numeric display
+                              displayValue = ''; // Or 'N/A' or 0 if preferred for empty/invalid stored data
                           }
                       } else {
-                          displayValue = 'N/A'; // Should not happen if keys match
+                          // Standard input field value (already handled by initial displayValue assignment)
+                          displayValue = compData[field.key] ?? '';
                       }
                   }
+                  // Note: Subject property display logic remains unchanged above
 
                   // Unique ID for validation errors (only for input fields)
                   const validationId = `salesComp_${compId}_${field.key}`;
@@ -392,8 +436,14 @@ function SalesComparisonApproach() { // Removed data prop for now, using context
       <h3>Sales Comparison Reconciliation</h3>
 
       <div className="reconciliation-section">
+         {/* Display Adjusted Price Range */}
+         <div className="form-field read-only-field"> {/* Added read-only-field class for potential styling */}
+            <label>Adjusted Sale Price Range (Comparables):</label>
+            <span className="sca-display">{adjustedPriceRange}</span>
+         </div>
+
         <div className="form-field">
-          <label htmlFor="salesCompIndicatedValue">Indicated Value by Sales Comparison Approach:</label>
+          <label htmlFor="salesCompIndicatedValue">Final Value Conclusion (Sales Comparison Approach):</label> {/* Updated Label */}
           <input
             type="number" // Use number for better input control
             id="salesCompIndicatedValue"
@@ -412,7 +462,7 @@ function SalesComparisonApproach() { // Removed data prop for now, using context
         </div>
 
         <div className="form-field">
-          <label>Reconciliation Narrative:</label>
+          <label>Comparable Weighting & Reconciliation Narrative:</label> {/* Updated Label */}
           <EditableField
             initialContent={reconciliationNarrative}
             onChange={(newContent) => {
@@ -430,25 +480,7 @@ function SalesComparisonApproach() { // Removed data prop for now, using context
         </div>
       </div>
 
-      {/* --- Existing Summary Section (Optional - could be merged or removed) --- */}
-      {/* Keeping it separate for now as per original structure */}
-      <h3>Summary of Sales Comparison Approach</h3>
-      <EditableField
-        initialContent={reportData.salesComparisonContent ?? `
-          <p>The adjusted sale prices of the comparable properties indicate a value range of $1,320,000 to $1,519,500 for the subject property. After analyzing the comparables and considering the subject's superior post-renovation condition, the indicated value from the Sales Comparison Approach is $1,450,000.</p>
-          <p>The primary value indicators were:</p>
-          <ul>
-            <li>Price per square foot of net rentable area ($62.50 - $63.46)</li>
-            <li>Price per unit ($69,474 - $79,974)</li>
-            <li>Overall capitalization rate (7.25% - 7.75%)</li>
-          </ul>
-          <p>This approach was given significant weight in the final reconciliation due to the availability of recent, reliable comparable sales and the approach's direct reflection of current market conditions.</p>
-        `}
-        onChange={(newContent) => updateReportData('salesComparisonContent', newContent)}
-        // Add validation ID if the summary needs validation
-        // validationId="salesComparisonSummary"
-        // error={validationErrors.salesComparisonSummary}
-      />
+      {/* Removed redundant Summary Section */}
     </section>
   );
 }
