@@ -1,4 +1,5 @@
 import React from 'react';
+import footerLogo from '../assets/Logo48.ico'; // Import the small logo
 import './ReportFooter.css';
 
 function ReportFooter() {
@@ -10,6 +11,7 @@ function ReportFooter() {
     <div className="report-footer">
       <span>{companyName}</span>
       <span>{reportIdentifier}</span>
+      <img src={footerLogo} alt="Small Logo" className="footer-logo" /> {/* Add the small logo */}
       {/* Page numbers are hard here, maybe add manually if needed */}
       {/* <span>Page X</span> */}
     </div>

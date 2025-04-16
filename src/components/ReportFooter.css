@@ -5,10 +5,55 @@
  */
 
 .report-footer {
+  display: flex; /* Use flexbox for layout */
+  justify-content: space-between; /* Space out items */
+  align-items: center; /* Vertically align items */
   margin-top: var(--spacing-xl); /* Ensure space above footer */
   padding-top: var(--spacing-lg); /* Space within footer */
   border-top: 1px solid var(--color-border); /* Separator line */
   font-size: 0.85rem; /* Smaller text for footer */
   color: #6c757d; /* Muted color */
-  text-align: center;
+  /* text-align: center; Removed as flexbox handles alignment */
+}
+
+.footer-logo {
+  width: 32px; /* Set fixed width */
+  height: 32px; /* Set fixed height */
+  margin-left: var(--spacing-md); /* Add some space to its left */
+}
+
+/* Print-specific styles */
+@media print {
+  @page {
+    /* Add margin to the bottom of each printed page to prevent content overlap */
+    /* Adjust this value based on the final footer height + desired spacing */
+    margin-bottom: 60px; /* Estimated value */
+  }
+
+  .report-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%; /* Ensure it spans the page width */
+    background-color: white; /* Prevent content showing through */
+
+    /* Re-apply necessary layout/styling from above for consistency */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+    font-size: 0.85rem;
+    color: #6c757d;
+
+    /* Override margin-top for fixed positioning */
+    margin-top: 0;
+
+    /* Optional: Add z-index if needed, but usually not required for simple footers */
+    /* z-index: 1000; */
+  }
+
+  /* Logo styles within print footer are inherited, adjust if needed */
+  /* .footer-logo { ... } */
 }

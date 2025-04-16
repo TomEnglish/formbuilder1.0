@@ -14,7 +14,7 @@
 }
 
 .report-logo {
-  max-height: 60px; /* Control logo size */
+  max-height: 90px; /* Control logo size - Increased */
   margin-right: var(--spacing-md); /* Space between logo and details */
   flex-shrink: 0; /* Prevent logo from shrinking */
 }
