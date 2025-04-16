@@ -4,6 +4,12 @@ import { ValidationContext } from '../context/ValidationContext'; // Import Vali
 import EditableField from './EditableField';
 import './SalesComparisonApproach.css';
 
+// --- Adjustment Factors (Placeholders) ---
+const GLA_ADJUSTMENT_RATE = 50; // $/sqft difference
+const SITE_ADJUSTMENT_RATE = 5; // $/sqft difference for site area
+const CONDITION_ADJUSTMENT_PERCENT = 0.05; // 5% adjustment for condition difference (e.g., Good vs. Average)
+// Add more factors as needed (e.g., Date of Sale, Location)
+
 // Helper function to generate a simple key from a field name
 const generateKey = (fieldName) => {
   return fieldName.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/adj$/, 'adjustment');
@@ -15,14 +21,15 @@ const initialComparable = {
   address: '',
   sale_price: '',
   sale_date: '',
-  gross_living_area_gla: '',
-  site_size: '',
-  age_condition: '',
-  location_adjustment: '',
-  condition_adjustment: '',
-  features_adjustment: '',
-  adjusted_sale_price_per_sqft: '', // May need calculation logic later
-  final_adjusted_sale_price: '', // May need calculation logic later
+  gross_living_area_gla: '', // Comparable's GLA
+  site_size: '', // Comparable's Site Size
+  age_condition: '', // Comparable's Condition (e.g., "Average", "Good")
+  // --- Fields below might be replaced/used by calculated adjustments ---
+  // location_adjustment: '', // Example placeholder
+  // condition_adjustment: '', // Example placeholder
+  // features_adjustment: '', // Example placeholder
+  // adjusted_sale_price_per_sqft: '', // Will be calculated
+  // final_adjusted_sale_price: '', // Will be calculated
 };
 
 // Initial structure for the subject property (can have fewer fields)
@@ -31,23 +38,36 @@ const initialSubject = {
   address: 'Subject Property', // Or fetch from main data
   sale_price: 'N/A',
   sale_date: 'N/A',
-  gross_living_area_gla: '', // Should be editable
-  site_size: '', // Should be editable
-  age_condition: '', // Should be editable
+  gross_living_area_gla: '', // Subject's GLA (will link to reportData)
+  site_size: '', // Subject's Site Size (will link to reportData)
+  age_condition: '', // Subject's Condition (will link to reportData)
+  // --- Adjustment fields are not applicable to the subject ---
   location_adjustment: 'N/A',
   condition_adjustment: 'N/A',
   features_adjustment: 'N/A',
-  adjusted_sale_price_per_sqft: 'N/A',
-  final_adjusted_sale_price: '', // Should be editable/calculated
+  gla_adjustment: 'N/A', // Display field for adjustments
+  site_adjustment: 'N/A', // Display field for adjustments
+  condition_adjustment_calc: 'N/A', // Display field for adjustments (avoid key conflict)
+  total_adjustment: 'N/A', // Display field for adjustments
+  adjusted_sale_price_per_sqft: 'N/A', // Display field for calculation
+  final_adjusted_sale_price: 'N/A', // Display field for calculation
 };
 
 
 function SalesComparisonApproach() { // Removed data prop for now, using context/local state
   const { reportData, updateReportData } = useContext(ReportContext);
-  const { validationErrors, validateField, getFieldRules } = useContext(ValidationContext); // Use ValidationContext
+  const { validationErrors, validateField } = useContext(ValidationContext); // Use ValidationContext
+
+  // --- Access Subject Data ---
+  const {
+    subjectGLA, // Assuming this is now in reportData (e.g., '1500')
+    siteArea: subjectSiteArea, // Assuming this is in reportData (e.g., '5000')
+    subjectCondition, // Assuming this is in reportData (e.g., 'Average')
+    // Add other necessary subject fields here
+  } = reportData;
 
   // --- State Management ---
-  // Initialize local state with subject + default comparables
+  // Initialize local state for comparable inputs
   // Attempt to load from reportData, otherwise use defaults
   const [localSalesData, setLocalSalesData] = useState(() => {
       const initialData = reportData.salesComparables && reportData.salesComparables.length > 0
@@ -61,23 +81,33 @@ function SalesComparisonApproach() { // Removed data prop for now, using context
       return initialData;
   });
 
+  // State for Reconciliation Section
+  const [indicatedValue, setIndicatedValue] = useState(reportData.salesCompIndicatedValue ?? '');
+  const [reconciliationNarrative, setReconciliationNarrative] = useState(
+    reportData.salesCompNarrative ?? '<p>Enter reconciliation narrative here...</p>'
+  );
+
   // --- Data Structure ---
   const fields = [
-    // Field Name, Type, Validation Rules (example)
-    { name: "Address", key: generateKey("Address"), type: "text", rules: ['required'] },
-    { name: "Sale Price", key: generateKey("Sale Price"), type: "number", rules: ['required', 'numerical'] },
-    { name: "Sale Date", key: generateKey("Sale Date"), type: "date", rules: ['required', 'date'] },
-    { name: "Gross Living Area (GLA)", key: generateKey("Gross Living Area (GLA)"), type: "number", rules: ['required', 'numerical'] },
-    { name: "Site Size", key: generateKey("Site Size"), type: "text", rules: ['required'] }, // Or number if strictly numeric
-    { name: "Age/Condition", key: generateKey("Age/Condition"), type: "text", rules: ['required'] },
-    { name: "Location Adj.", key: generateKey("Location Adj."), type: "text", rules: ['numerical'] }, // Allow % or $
-    { name: "Condition Adj.", key: generateKey("Condition Adj."), type: "text", rules: ['numerical'] }, // Allow % or $
-    { name: "Features Adj.", key: generateKey("Features Adj."), type: "text", rules: ['numerical'] }, // Allow % or $
-    { name: "Adjusted Sale Price per SqFt", key: generateKey("Adjusted Sale Price per SqFt"), type: "number", rules: ['numerical'], readOnly: true }, // Calculated?
-    { name: "Final Adjusted Sale Price", key: generateKey("Final Adjusted Sale Price"), type: "number", rules: ['numerical'], readOnly: true }, // Calculated?
+    // --- Input Fields ---
+    { name: "Address", key: "address", type: "text", rules: ['required'] },
+    { name: "Sale Price", key: "sale_price", type: "number", rules: ['required', 'numerical'] },
+    { name: "Sale Date", key: "sale_date", type: "date", rules: ['required', 'date'] },
+    { name: "Gross Living Area (GLA)", key: "gross_living_area_gla", type: "number", rules: ['required', 'numerical'] },
+    { name: "Site Size", key: "site_size", type: "number", rules: ['required', 'numerical'] }, // Assuming numeric sqft/acres
+    { name: "Age/Condition", key: "age_condition", type: "text", rules: ['required'] }, // Example: "Average", "Good", "Fair"
+    // --- Adjustment Calculation Display Fields (Read Only) ---
+    // { name: "Location Adj.", key: "location_adjustment", type: "text", readOnly: true }, // Example if needed later
+    { name: "GLA Adjustment", key: "gla_adjustment", type: "number", readOnly: true },
+    { name: "Site Adjustment", key: "site_adjustment", type: "number", readOnly: true },
+    { name: "Condition Adjustment", key: "condition_adjustment_calc", type: "number", readOnly: true }, // Use different key
+    // Add other adjustment display rows here (e.g., Date of Sale Adj.)
+    { name: "Total Adjustment", key: "total_adjustment", type: "number", readOnly: true },
+    { name: "Adjusted Sale Price per SqFt", key: "adjusted_sale_price_per_sqft", type: "number", readOnly: true },
+    { name: "Final Adjusted Sale Price", key: "final_adjusted_sale_price", type: "number", readOnly: true },
   ];
 
-  // Columns derived from local state
+  // Columns derived from local state (Addresses)
   const columns = localSalesData.map(item => item.address || `Comp ${item.id}`);
 
   // --- Event Handlers ---
@@ -98,9 +128,27 @@ function SalesComparisonApproach() { // Removed data prop for now, using context
     const validationId = `salesComp_${localSalesData[compIndex].id}_${fieldKey}`;
     validateField(validationId, value, rules);
 
-    // TODO: Add logic here to recalculate dependent fields if necessary
-    // e.g., Adjusted Sale Price per SqFt, Final Adjusted Sale Price
+    // Calculations are done during render, so no explicit recalculation needed here
   };
+
+   // --- Calculation Logic ---
+   // Helper to safely parse float, returning 0 if invalid
+   const parseFloatSafe = (value) => {
+       const parsed = parseFloat(value);
+       return isNaN(parsed) ? 0 : parsed;
+   };
+
+   // Helper to compare condition strings (simple example)
+   const compareCondition = (compCondition, subjCondition) => {
+       const conditions = { "Poor": 1, "Fair": 2, "Average": 3, "Good": 4, "Excellent": 5 };
+       const compVal = conditions[compCondition] || 0;
+       const subjVal = conditions[subjCondition] || 0;
+       if (compVal === 0 || subjVal === 0) return 0; // Cannot compare if unknown
+       if (compVal < subjVal) return -1; // Comp is inferior
+       if (compVal > subjVal) return 1;  // Comp is superior
+       return 0; // Conditions are equal
+   };
+
 
   const handleSave = () => {
     // Optional: Final validation check before saving
@@ -123,10 +171,33 @@ function SalesComparisonApproach() { // Removed data prop for now, using context
       return; // Prevent saving if errors exist
     }
 
+    // Validate reconciliation fields
+    const indicatedValueId = 'salesCompIndicatedValue';
+    const narrativeId = 'salesCompNarrative';
+    validateField(indicatedValueId, indicatedValue, ['required', 'numerical']);
+    validateField(narrativeId, reconciliationNarrative, ['required']); // Or use 'contentLength' if needed
+
+    // Check validation errors object directly after triggering validation
+    // Note: Validation state updates might be async, this check might need refinement
+    // if errors don't appear immediately. A useEffect might be better for complex cases.
+    if (validationErrors[indicatedValueId] || validationErrors[narrativeId]) {
+        console.error(`Validation Error: Reconciliation fields have errors.`);
+        hasErrors = true; // Mark that there are errors
+    }
+
+    if (hasErrors) {
+      alert('Please fix validation errors before saving.');
+      return; // Prevent saving if errors exist
+    }
+
     // Update global state
     updateReportData('salesComparables', localSalesData);
-    alert('Comparable sales data saved successfully!'); // Simple feedback
+    updateReportData('salesCompIndicatedValue', indicatedValue);
+    updateReportData('salesCompNarrative', reconciliationNarrative);
+
+    alert('Sales comparison data and reconciliation saved successfully!'); // Simple feedback
     console.log("Saved sales comparables to global state:", localSalesData); // For debugging
+    console.log("Saved reconciliation data:", { indicatedValue, reconciliationNarrative }); // For debugging
   };
 
 
@@ -169,19 +240,103 @@ function SalesComparisonApproach() { // Removed data prop for now, using context
             </tr>
           </thead>
           <tbody>
-            {fields.map((field, rowIndex) => (
+            {fields.map((field) => ( // Removed rowIndex, using field.key
               <tr key={field.key}>
                 <td className="feature-label">{field.name}</td>
                 {localSalesData.map((compData, colIndex) => {
                   const isSubject = colIndex === 0;
-                  const value = compData[field.key] ?? '';
-                  // Unique ID for validation errors
-                  const validationId = `salesComp_${compData.id}_${field.key}`;
-                  const error = validationErrors[validationId];
-                  // Disable fields for subject that are not applicable (N/A)
-                  const isDisabled = isSubject && ['sale_price', 'sale_date', 'location_adjustment', 'condition_adjustment', 'features_adjustment', 'adjusted_sale_price_per_sqft'].includes(field.key);
-                  // Mark calculated fields as readOnly for now
-                  const isReadOnly = field.readOnly || isDisabled;
+                  const compId = compData.id ?? colIndex; // Use comp id or index as fallback key
+                  let displayValue = compData[field.key] ?? '';
+                  let isReadOnly = field.readOnly || false;
+                  let isDisabled = false;
+
+                  // --- Subject Property Handling ---
+                  if (isSubject) {
+                      // Link specific subject fields to global state if needed for editing *here*
+                      // This example assumes subject data is primarily viewed or comes from reportData
+                      if (field.key === 'gross_living_area_gla') displayValue = subjectGLA ?? '';
+                      else if (field.key === 'site_size') displayValue = subjectSiteArea ?? '';
+                      else if (field.key === 'age_condition') displayValue = subjectCondition ?? '';
+                      // Disable non-applicable fields for subject
+                      isDisabled = ['sale_price', 'sale_date', 'gla_adjustment', 'site_adjustment', 'condition_adjustment_calc', 'total_adjustment', 'adjusted_sale_price_per_sqft', 'final_adjusted_sale_price'].includes(field.key);
+                      if (isDisabled) displayValue = 'N/A';
+                      // Subject input fields might need separate handling if they should update global state directly
+                      // For now, treat them as read-only display of reportData in this grid
+                      isReadOnly = true; // Make subject column read-only in this grid view
+                  }
+
+                  // --- Comparable Property Calculations (only if not subject) ---
+                  let calculatedAdjustments = {};
+                  if (!isSubject && !field.readOnly) {
+                      // Standard input field value
+                      displayValue = compData[field.key] ?? '';
+                  } else if (!isSubject && field.readOnly) {
+                      // --- Perform Calculations ---
+                      const compSalePrice = parseFloatSafe(compData.sale_price);
+                      const compGLA = parseFloatSafe(compData.gross_living_area_gla);
+                      const compSiteSize = parseFloatSafe(compData.site_size);
+                      const compCondition = compData.age_condition; // String like "Average"
+
+                      const subjGLA = parseFloatSafe(subjectGLA);
+                      const subjSite = parseFloatSafe(subjectSiteArea);
+                      const subjCondition = subjectCondition; // String like "Good"
+
+                      // GLA Adjustment: Subject GLA - Comp GLA * Rate
+                      const glaAdjustment = (subjGLA > 0 && compGLA > 0)
+                          ? (subjGLA - compGLA) * GLA_ADJUSTMENT_RATE
+                          : 0;
+
+                      // Site Adjustment: Subject Site - Comp Site * Rate
+                      const siteAdjustment = (subjSite > 0 && compSiteSize > 0)
+                          ? (subjSite - compSiteSize) * SITE_ADJUSTMENT_RATE
+                          : 0;
+
+                      // Condition Adjustment: Based on comparison (-1, 0, 1) * Percent * Comp Sale Price
+                      const conditionComparison = compareCondition(compCondition, subjCondition);
+                      const conditionAdjustment = (compSalePrice > 0)
+                          ? conditionComparison * CONDITION_ADJUSTMENT_PERCENT * compSalePrice
+                          : 0;
+                      // Note: This is a simple % adjustment. Negative if comp is better, positive if comp is worse.
+
+                      // --- Total Adjustment ---
+                      const totalAdjustment = glaAdjustment + siteAdjustment + conditionAdjustment; // Add other adjustments here
+
+                      // --- Adjusted Sale Price ---
+                      const finalAdjustedSalePrice = compSalePrice + totalAdjustment;
+
+                      // --- Adjusted Sale Price per SqFt ---
+                      const adjustedSalePricePerSqFt = (compGLA > 0)
+                          ? finalAdjustedSalePrice / compGLA
+                          : 0;
+
+                      calculatedAdjustments = {
+                          gla_adjustment: glaAdjustment,
+                          site_adjustment: siteAdjustment,
+                          condition_adjustment_calc: conditionAdjustment,
+                          total_adjustment: totalAdjustment,
+                          adjusted_sale_price_per_sqft: adjustedSalePricePerSqFt,
+                          final_adjusted_sale_price: finalAdjustedSalePrice,
+                      };
+
+                      // Set display value for calculated fields
+                      if (calculatedAdjustments.hasOwnProperty(field.key)) {
+                          const numericValue = calculatedAdjustments[field.key];
+                          // Format as currency for price/adjustment fields, fixed decimals for sqft
+                          if (['gla_adjustment', 'site_adjustment', 'condition_adjustment_calc', 'total_adjustment', 'final_adjusted_sale_price'].includes(field.key)) {
+                              displayValue = numericValue.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                          } else if (field.key === 'adjusted_sale_price_per_sqft') {
+                              displayValue = numericValue.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                          } else {
+                              displayValue = numericValue; // Default numeric display
+                          }
+                      } else {
+                          displayValue = 'N/A'; // Should not happen if keys match
+                      }
+                  }
+
+                  // Unique ID for validation errors (only for input fields)
+                  const validationId = `salesComp_${compId}_${field.key}`;
+                  const error = !isReadOnly ? validationErrors[validationId] : null; // Only show errors for editable fields
 
                   // Determine input type, default to text
                   let inputType = field.type || 'text';
@@ -196,22 +351,25 @@ function SalesComparisonApproach() { // Removed data prop for now, using context
 
                   return (
                     <td key={`${field.key}-${compData.id ?? colIndex}`}>
-                      <input
-                        type={inputType}
-                        value={isDisabled ? 'N/A' : value}
-                        onChange={(e) => !isReadOnly && handleInputChange(colIndex, field.key, e.target.value)}
-                        onBlur={() => { // Validate on blur as well
-                            if (!isReadOnly) {
-                                const rules = field.rules || [];
-                                validateField(validationId, value, rules);
-                            }
-                        }}
-                        readOnly={isReadOnly}
-                        disabled={isDisabled}
-                        className={`sca-input ${error ? 'input-error' : ''}`}
-                        aria-label={`${field.name} for ${columns[colIndex]}`}
-                        // Add step="any" for number inputs if needed, but using text for flexibility
-                      />
+                      {/* Render input for editable fields, span for read-only/calculated */}
+                      {(!isReadOnly && !isDisabled) ? (
+                        <input
+                          type={field.type === 'number' ? 'number' : (field.type === 'date' ? 'date' : 'text')} // Use appropriate type
+                          value={displayValue}
+                          onChange={(e) => handleInputChange(colIndex, field.key, e.target.value)}
+                          onBlur={() => {
+                              const rules = field.rules || [];
+                              validateField(validationId, displayValue, rules);
+                          }}
+                          className={`sca-input ${error ? 'input-error' : ''}`}
+                          aria-label={`${field.name} for ${columns[colIndex]}`}
+                          step={field.type === 'number' ? 'any' : undefined} // Allow decimals for number type
+                        />
+                      ) : (
+                        <span className={`sca-display ${isDisabled ? 'disabled' : ''}`}>
+                          {displayValue}
+                        </span>
+                      )}
                       {error && <div className="error-message">{error}</div>}
                     </td>
                   );
@@ -229,7 +387,51 @@ function SalesComparisonApproach() { // Removed data prop for now, using context
           </button>
       </div>
 
+      {/* --- Reconciliation Section --- */}
+      <hr />
+      <h3>Sales Comparison Reconciliation</h3>
 
+      <div className="reconciliation-section">
+        <div className="form-field">
+          <label htmlFor="salesCompIndicatedValue">Indicated Value by Sales Comparison Approach:</label>
+          <input
+            type="number" // Use number for better input control
+            id="salesCompIndicatedValue"
+            value={indicatedValue}
+            onChange={(e) => setIndicatedValue(e.target.value)}
+            onBlur={() => validateField('salesCompIndicatedValue', indicatedValue, ['required', 'numerical'])}
+            className={`sca-input ${validationErrors.salesCompIndicatedValue ? 'input-error' : ''}`}
+            aria-describedby="salesCompIndicatedValueError"
+            step="any" // Allow decimals
+          />
+          {validationErrors.salesCompIndicatedValue && (
+            <div id="salesCompIndicatedValueError" className="error-message">
+              {validationErrors.salesCompIndicatedValue}
+            </div>
+          )}
+        </div>
+
+        <div className="form-field">
+          <label>Reconciliation Narrative:</label>
+          <EditableField
+            initialContent={reconciliationNarrative}
+            onChange={(newContent) => {
+              setReconciliationNarrative(newContent);
+              // Optional: Validate on change or wait for blur/save
+              // validateField('salesCompNarrative', newContent, ['required']);
+            }}
+            onBlur={(currentContent) => { // Pass content from EditableField's internal state on blur
+                validateField('salesCompNarrative', currentContent, ['required']);
+            }}
+            validationId="salesCompNarrative" // Pass validationId for error lookup
+            error={validationErrors.salesCompNarrative} // Pass error message
+          />
+          {/* Error display is handled within EditableField now */}
+        </div>
+      </div>
+
+      {/* --- Existing Summary Section (Optional - could be merged or removed) --- */}
+      {/* Keeping it separate for now as per original structure */}
       <h3>Summary of Sales Comparison Approach</h3>
       <EditableField
         initialContent={reportData.salesComparisonContent ?? `

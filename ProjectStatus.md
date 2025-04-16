@@ -41,20 +41,27 @@
 - [x] Integrate boilerplate text into other relevant components (e.g., Definitions in Scope of Work)
 - [x] Populate placeholder components with basic structure/content based on sample report (Table of Contents completed)
 
-## Phase 4: Valuation Logic & Data Input
+## Phase 4: Valuation Logic, Data Input & Validation
+- [x] **Implemented Core Validation Framework (`ValidationContext`)**
 - [ ] **Sales Comparison Approach:**
-    - [ ] Design UI for entering/displaying comparable sales data
+    - [x] Implement basic UI for entering/displaying comparable sales data (local state)
+    - [x] Implement field-level validation (required, numerical, date)
+    - [x] Implement save mechanism (local state -> global context)
     - [ ] Implement logic for adjustments
     - [ ] Implement calculation for adjusted sale prices
     - [ ] Implement reconciliation logic within Sales Comp section
 - [ ] **Cost Approach:**
-    - [ ] Design UI for entering land value, cost data, depreciation factors
-    - [ ] Implement calculation for Replacement Cost New
+    - [x] Implement basic UI for entering land value, cost data, depreciation factors (local state)
+    - [x] Implement field-level validation (required, numerical)
+    - [x] Implement save mechanism (local state -> global context)
+    - [x] Implement calculation for Replacement Cost New (within component)
     - [ ] Implement calculation for depreciation
     - [ ] Implement summation logic
 - [ ] **Income Approach:**
-    - [ ] Design UI for entering market rent, vacancy, expenses, rates
-    - [ ] Implement calculation for PGI, EGI, NOI
+    - [x] Implement basic UI for entering market rent, vacancy, expenses, rates (local state)
+    - [x] Implement field-level validation (required, numerical)
+    - [x] Implement save mechanism (local state -> global context)
+    - [x] Implement calculation for PGI, EGI, NOI (within component)
     - [ ] Implement Direct Capitalization calculation
     - [ ] Implement DCF analysis (Optional/Advanced)
 - [ ] **Reconciliation:**

@@ -32,6 +32,7 @@ const initialState = {
     asIsMarketValueSiteImprovements: '',
     // indicatedValueByCostApproach: '', // Example: Calculated
   },
+  costApproachIndicatedValue: '', // Added for the final calculated value
   incomeApproachContent: '<p>Enter content here...</p>',
   // Income Approach Data (Detailed Fields)
   incomeApproach: {
@@ -53,11 +54,17 @@ const initialState = {
     indicatedValueByIncomeApproach: '', // Calculated, but good to store the result
   },
   reconciliationContent: '<p>Enter content here...</p>',
+  finalValueConclusion: '', // Added for final reconciliation step
   // Sales Comparison Approach Data (Grid)
   salesComparables: [], // Array to hold subject + comparable objects
+  salesCompIndicatedValue: '', // Indicated value from Sales Comparison
+  salesCompNarrative: '<p>Enter reconciliation narrative here...</p>', // Narrative for Sales Comparison Reconciliation
   // Property Summary Data
   propertyType: '',
   yearBuilt: '',
+  subjectGLA: '', // Added for Sales Comparison
+  subjectCondition: '', // Added for Sales Comparison (e.g., "Average", "Good", "Fair")
+  subjectDateOfSale: '', // Added for Sales Comparison timing
 
   // Site Description Data
   siteArea: '',

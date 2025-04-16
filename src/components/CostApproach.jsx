@@ -27,6 +27,9 @@ function CostApproach() {
 
   // Calculated values - derived from local state
   const [calculatedValues, setCalculatedValues] = useState({
+    physicalDeteriorationCalculated: 0,
+    functionalObsolescenceCalculated: 0,
+    externalObsolescenceCalculated: 0,
     totalDepreciation: 0,
     depreciatedCostImprovements: 0,
     indicatedValueByCostApproach: 0,
@@ -63,16 +66,37 @@ function CostApproach() {
   useEffect(() => {
     const siteVal = parseFloat(costData.siteValue) || 0;
     const costNew = parseFloat(costData.improvementCostNewAmount) || 0;
-    const physDeter = parseFloat(costData.physicalDeteriorationAmount) || 0;
-    const funcObs = parseFloat(costData.functionalObsolescenceAmount) || 0;
-    const extObs = parseFloat(costData.externalObsolescenceAmount) || 0;
     const siteImpr = parseFloat(costData.asIsMarketValueSiteImprovements) || 0;
 
-    const totalDep = physDeter + funcObs + extObs;
+    // Calculate Physical Deterioration Amount (Amount takes precedence over Percent)
+    let physDeterAmountCalc = parseFloat(costData.physicalDeteriorationAmount) || 0;
+    if (!physDeterAmountCalc && costData.physicalDeteriorationPercent) {
+        const percent = parseFloat(costData.physicalDeteriorationPercent) || 0;
+        physDeterAmountCalc = (percent / 100) * costNew;
+    }
+
+    // Calculate Functional Obsolescence Amount (Amount takes precedence over Percent)
+    let funcObsAmountCalc = parseFloat(costData.functionalObsolescenceAmount) || 0;
+    if (!funcObsAmountCalc && costData.functionalObsolescencePercent) {
+        const percent = parseFloat(costData.functionalObsolescencePercent) || 0;
+        funcObsAmountCalc = (percent / 100) * costNew;
+    }
+
+    // Calculate External Obsolescence Amount (Amount takes precedence over Percent)
+    let extObsAmountCalc = parseFloat(costData.externalObsolescenceAmount) || 0;
+    if (!extObsAmountCalc && costData.externalObsolescencePercent) {
+        const percent = parseFloat(costData.externalObsolescencePercent) || 0;
+        extObsAmountCalc = (percent / 100) * costNew;
+    }
+
+    const totalDep = physDeterAmountCalc + funcObsAmountCalc + extObsAmountCalc;
     const depCost = costNew - totalDep;
     const indicatedValue = siteVal + depCost + siteImpr;
 
     setCalculatedValues({
+      physicalDeteriorationCalculated: physDeterAmountCalc,
+      functionalObsolescenceCalculated: funcObsAmountCalc,
+      externalObsolescenceCalculated: extObsAmountCalc,
       totalDepreciation: totalDep,
       depreciatedCostImprovements: depCost,
       indicatedValueByCostApproach: indicatedValue,
@@ -104,7 +128,10 @@ function CostApproach() {
 
     if (allValid) {
       console.log("Saving Cost Approach Data:", costData);
+      console.log("Saving Calculated Cost Approach Value:", calculatedValues.indicatedValueByCostApproach);
       updateReportData('costApproachData', costData);
+      // Also save the final calculated value
+      updateReportData('costApproachIndicatedValue', calculatedValues.indicatedValueByCostApproach);
       setSaveStatus('Cost Approach data saved successfully!');
       // Optionally clear local validation errors after successful save
       // clearAllValidationErrors(); // Assuming a function exists in ValidationContext
@@ -201,10 +228,11 @@ function CostApproach() {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 placeholder="Amount"
-                 className={validationErrors.physicalDeteriorationAmount ? 'invalid' : ''}
+                className={validationErrors.physicalDeteriorationAmount ? 'invalid' : ''}
               />
+              <span className="calculated-depreciation">({formatCurrency(calculatedValues.physicalDeteriorationCalculated)})</span>
               {validationErrors.physicalDeteriorationPercent && <span className="error-message">{validationErrors.physicalDeteriorationPercent}</span>}
-               {validationErrors.physicalDeteriorationAmount && <span className="error-message">{validationErrors.physicalDeteriorationAmount}</span>}
+              {validationErrors.physicalDeteriorationAmount && <span className="error-message">{validationErrors.physicalDeteriorationAmount}</span>}
             </td>
           </tr>
           <tr className="sub-item">
@@ -229,6 +257,7 @@ function CostApproach() {
                 placeholder="Amount"
                 className={validationErrors.functionalObsolescenceAmount ? 'invalid' : ''}
               />
+              <span className="calculated-depreciation">({formatCurrency(calculatedValues.functionalObsolescenceCalculated)})</span>
               {validationErrors.functionalObsolescencePercent && <span className="error-message">{validationErrors.functionalObsolescencePercent}</span>}
               {validationErrors.functionalObsolescenceAmount && <span className="error-message">{validationErrors.functionalObsolescenceAmount}</span>}
             </td>
@@ -255,6 +284,7 @@ function CostApproach() {
                 placeholder="Amount"
                 className={validationErrors.externalObsolescenceAmount ? 'invalid' : ''}
               />
+              <span className="calculated-depreciation">({formatCurrency(calculatedValues.externalObsolescenceCalculated)})</span>
               {validationErrors.externalObsolescencePercent && <span className="error-message">{validationErrors.externalObsolescencePercent}</span>}
               {validationErrors.externalObsolescenceAmount && <span className="error-message">{validationErrors.externalObsolescenceAmount}</span>}
             </td>
