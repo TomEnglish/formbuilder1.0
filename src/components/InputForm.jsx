@@ -1,9 +1,11 @@
-import React, { useContext } from 'react'; // Import useContext
-import { ReportContext } from '../context/ReportDataContext.jsx'; // Import context
+import React, { useContext } from 'react';
+import { ReportContext } from '../context/ReportDataContext.jsx';
+import { ValidationContext } from '../context/ValidationContext.jsx'; // Import ValidationContext
 // import './InputForm.css'; // Optional CSS import
 
 const InputForm = () => {
-  const { reportData, updateReportData } = useContext(ReportContext); // Use context
+  const { reportData, updateReportData } = useContext(ReportContext);
+  const { validateField, setFieldError, clearFieldError, validationErrors } = useContext(ValidationContext); // Use ValidationContext
 
   return (
     <form className="input-form">
@@ -34,9 +36,19 @@ const InputForm = () => {
           type="date"
           id="effectiveDate"
           name="effectiveDate"
-          value={reportData.effectiveDate || ''} // Read from context, provide fallback
-          onChange={(e) => updateReportData(e.target.name, e.target.value)} // Update context
-         />
+          value={reportData.effectiveDate || ''}
+          onChange={(e) => {
+            const { name, value } = e.target;
+            const validation = validateField(value, 'date');
+            if (!validation.isValid) {
+              setFieldError(name, validation.message);
+            } else {
+              clearFieldError(name);
+            }
+            updateReportData(name, value); // Update context regardless for immediate feedback
+          }}
+        />
+        {validationErrors.effectiveDate && <div className="error-message">{validationErrors.effectiveDate}</div>}
       </div>
       <div className="form-group">
         <label htmlFor="appraiserName">Appraiser Name:</label>
@@ -54,9 +66,19 @@ const InputForm = () => {
           type="date"
           id="inspectionDate"
           name="inspectionDate"
-          value={reportData.inspectionDate || ''} // Read from context, provide fallback
-          onChange={(e) => updateReportData(e.target.name, e.target.value)} // Update context
+          value={reportData.inspectionDate || ''}
+          onChange={(e) => {
+            const { name, value } = e.target;
+            const validation = validateField(value, 'date');
+            if (!validation.isValid) {
+              setFieldError(name, validation.message);
+            } else {
+              clearFieldError(name);
+            }
+            updateReportData(name, value); // Update context regardless for immediate feedback
+          }}
         />
+        {validationErrors.inspectionDate && <div className="error-message">{validationErrors.inspectionDate}</div>}
       </div>
     </form>
   );

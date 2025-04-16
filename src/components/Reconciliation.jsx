@@ -1,12 +1,14 @@
 import React, { useContext } from 'react'; // Import useContext
-import { ReportContext } from '../context/ReportDataContext'; // Import ReportContext
+import { ReportContext } from '../context/ReportDataContext';
+import { ValidationContext } from '../context/ValidationContext';
 import EditableField from './EditableField';
 import './Reconciliation.css';
 
 // Removed props
 function Reconciliation() {
   // Get context data
-  const { reportData, updateReportData } = useContext(ReportContext);
+  const { reportData, updateReportData } = useContext(ReportContext); // Get report data
+  const { validateField, setFieldError, validationErrors } = useContext(ValidationContext); // Get validation functions and errors
 
   // Get values from reportData context with fallbacks
   const finalValue = reportData.reconciliation?.finalValueConclusion ?? "[Final Value]"; // Assuming structure
@@ -19,7 +21,15 @@ function Reconciliation() {
       <h3>Reconciliation Narrative</h3>
       <EditableField
         initialContent={reportData.reconciliationContent ?? '<p>[Enter reconciliation narrative here. Discuss the approaches considered, the weight given to each, and the rationale for the final value conclusion.]</p>'}
-        onChange={(newContent) => updateReportData('reconciliationContent', newContent)}
+        onChange={(newContent) => {
+          const validation = validateField(newContent, 'contentLength', [100, 5000]);
+          if (!validation.isValid) {
+            setFieldError('reconciliationContent', validation.message);
+          } else {
+            updateReportData('reconciliationContent', newContent);
+          }
+        }}
+        error={validationErrors.reconciliationContent}
       />
 
       <h3>Final Conclusion</h3>

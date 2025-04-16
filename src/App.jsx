@@ -18,7 +18,8 @@ import ValuationMethodology from './components/ValuationMethodology';
 import LetterOfTransmittal from './components/LetterOfTransmittal'; // Import new component
 import TableOfContents from './components/TableOfContents'; // Import new component
 import Addenda from './components/Addenda'; // Import new component
-import { ReportDataProvider, ReportContext } from './context/ReportDataContext'; // Import ReportContext
+import { ReportDataProvider, ReportContext } from './context/ReportDataContext';
+import { ValidationProvider } from './context/ValidationContext';
 import InputForm from './components/InputForm.jsx';
 
 // Removed CSV_URL as data will come from file upload
@@ -72,7 +73,8 @@ function App() {
 
   return (
     <ReportDataProvider>
-    <div className="App">
+      <ValidationProvider>
+        <div className="App">
       <h1>Appraisal Report Generator</h1>
       <InputForm />
 
@@ -132,6 +134,7 @@ function App() {
         {/* Removed closing part of conditional rendering */}
       </div>
     </div>
+      </ValidationProvider>
     </ReportDataProvider>
   );
 }

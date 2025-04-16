@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 
 // Define the initial state structure for the report data
 const initialState = {
@@ -68,11 +68,20 @@ export const ReportDataProvider = ({ children }) => {
       ...prevData,
       [fieldName]: value,
     }));
+
+    // Clear any existing validation error for this field
+    setValidationErrors(prevErrors => ({
+      ...prevErrors,
+      [fieldName]: null
+    }));
   };
 
   // Provide the state and the update function to children components
   return (
-    <ReportContext.Provider value={{ reportData, updateReportData }}>
+    <ReportContext.Provider value={{
+      reportData,
+      updateReportData
+    }}>
       {children}
     </ReportContext.Provider>
   );

@@ -1,7 +1,22 @@
 .editable-field-container {
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color, #ccc);
+  background-color: var(--background-color, transparent);
   border-radius: 4px;
-  margin-bottom: 1rem; /* Add some space below the editor */
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.editable-field-container.error {
+  border-color: #dc3545;
+  background-color: #fff5f5;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  padding: 0.5rem 0 0 0.5rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid #ffe3e3;
 }
 
 .menu-bar {

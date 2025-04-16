@@ -1,9 +1,11 @@
-import React, { useContext } from 'react'; // Import useContext
-import { ReportContext } from '../context/ReportDataContext.jsx'; // Import ReportContext
+import React, { useContext } from 'react';
+import { ReportContext } from '../context/ReportDataContext.jsx';
+import { ValidationContext } from '../context/ValidationContext.jsx'; // Import ValidationContext
 import EditableField from './EditableField';
 
 function PropertySummary() { // Remove props
-  const { reportData, updateReportData } = useContext(ReportContext); // Use context
+  const { reportData, updateReportData } = useContext(ReportContext);
+  const { validateField, setFieldError, clearFieldError, validationErrors } = useContext(ValidationContext); // Use ValidationContext
 
   // Removed old destructuring and if (!data) check
 
@@ -27,8 +29,21 @@ function PropertySummary() { // Remove props
         <strong>Year Built:</strong>
         {/* Updated EditableField to use context */}
         <EditableField
-          value={reportData.yearBuilt || ''}
-          onChange={(newContent) => updateReportData('yearBuilt', newContent)}
+          value={reportData.yearBuilt || ''} // Note: EditableField might not be ideal for plain numbers
+          onChange={(newContent) => {
+            // Attempt to clean and validate as a number
+            const numericValue = String(newContent).replace(/<[^>]*>?/gm, ''); // Strip potential HTML
+            const validation = validateField(numericValue, 'numerical');
+            if (!validation.isValid) {
+              setFieldError('yearBuilt', validation.message);
+              // Optionally update reportData even if invalid, depending on desired UX
+              // updateReportData('yearBuilt', numericValue);
+            } else {
+              updateReportData('yearBuilt', numericValue); // Update with cleaned value
+              clearFieldError('yearBuilt'); // Clear error on valid input
+            }
+          }}
+          error={validationErrors.yearBuilt}
         />
       </div>
     </div>
